@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venus.AI.WebApi", "Venus.AI.WebApi\Venus.AI.WebApi.csproj", "{BA5A0DB5-A014-43B4-BC83-DFB9BAD3474C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venus.AI.Bot", "Venus.AI.Bot\Venus.AI.Bot.csproj", "{62BD2B55-0856-4907-94E9-AB471A351561}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venus.AI.ConsoleClient", "Venus.AI.ConsoleClient\Venus.AI.ConsoleClient.csproj", "{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{BA5A0DB5-A014-43B4-BC83-DFB9BAD3474C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA5A0DB5-A014-43B4-BC83-DFB9BAD3474C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA5A0DB5-A014-43B4-BC83-DFB9BAD3474C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62BD2B55-0856-4907-94E9-AB471A351561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62BD2B55-0856-4907-94E9-AB471A351561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62BD2B55-0856-4907-94E9-AB471A351561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62BD2B55-0856-4907-94E9-AB471A351561}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
