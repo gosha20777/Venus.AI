@@ -19,8 +19,10 @@ namespace Venus.AI.WebApi.Models.AiServices
             return _apiAi.Invork(inputText);
         }
 
-        internal class ApiAiService : IService
+        private class ApiAiService : IService
         {
+            private const bool SHOW_DEBUG_INFO = true;
+
             private static ApiAiSDK.ApiAi apiAi;
             private static ApiAiSDK.RequestExtras requestExtras;
             private readonly string tocken = "768c62bfc2f04af2be7c85c47fabd3b2";
@@ -77,23 +79,26 @@ namespace Venus.AI.WebApi.Models.AiServices
 
                 //DEBUG INFO
                 #region DebugInfo
-                Console.WriteLine("User: " + inputText);
-                Console.WriteLine("Masha: " + outputText);
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.WriteLine("BOT CONTEXTS:");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("# Paremetr Name");
-                foreach (var context in aiResponse.Result.Contexts)
+                if (SHOW_DEBUG_INFO)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.WriteLine("## {0}", context.Name);
+                    Console.WriteLine("User: " + inputText);
+                    Console.WriteLine("Masha: " + outputText);
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    Console.WriteLine("BOT CONTEXTS:");
                     Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine("\tName\t\t\t|Value");
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    foreach (var parameter in context.Parameters)
-                        Console.WriteLine("\t{0,-23} |{1}", parameter.Key, parameter.Value);
+                    Console.WriteLine("# Paremetr Name");
+                    foreach (var context in aiResponse.Result.Contexts)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.WriteLine("## {0}", context.Name);
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.WriteLine("\tName\t\t\t|Value");
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        foreach (var parameter in context.Parameters)
+                            Console.WriteLine("\t{0,-23} |{1}", parameter.Key, parameter.Value);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Gray;
                 }
-                Console.ForegroundColor = ConsoleColor.Gray;
                 #endregion
                 return outputText;
             }

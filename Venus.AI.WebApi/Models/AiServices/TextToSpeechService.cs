@@ -12,43 +12,63 @@ namespace Venus.AI.WebApi.Models.AiServices
 {
     public class TextToSpeechService : IService
     {
-        private readonly CancellationToken cancellationToken = new CancellationToken();
-
+        private YandexSpeechKitService _yandexSpeechKitService;
         public void Initialize(Enums.Language language)
         {
-            throw new NotImplementedException();
+            _yandexSpeechKitService = new YandexSpeechKitService();
+            _yandexSpeechKitService.Initialize(language);
         }
 
         public async Task<byte[]> Invork(string text)
         {
-            return await InvorkYandexSpeechKitAsync(text);
+            return await _yandexSpeechKitService.Invork(text);
         }
 
-        private async Task<byte[]> InvorkYandexSpeechKitAsync(string text)
+        private class YandexSpeechKitService : IService
         {
-            byte[] speechData;
-            var apiSetttings = new SpeechKitClientOptions("b10e4ccd-e306-4725-a1c0-75b447ef79f2", "MashaWebApi", Guid.Empty, "server");
-            using (var client = new SpeechKitClient(apiSetttings))
+            private readonly CancellationToken cancellationToken = new CancellationToken();
+            private SynthesisLanguage _language;
+            
+            public void Initialize(Enums.Language language)
             {
-                var options = new SynthesisOptions(text, 1.3)
+                switch (language)
                 {
-                    AudioFormat = SynthesisAudioFormat.Wav,
-                    Language = SynthesisLanguage.Russian,
-                    Emotion = Emotion.Good,
-                    Quality = SynthesisQuality.High,
-                    Speaker = Speaker.Omazh
-                };
-
-                using (var textToSpechResult = await client.TextToSpeechAsync(options, cancellationToken).ConfigureAwait(false))
-                {
-                    if (textToSpechResult.TransportStatus != TransportStatus.Ok || textToSpechResult.ResponseCode != HttpStatusCode.OK)
-                    {
-                        throw new Exception("YandexSpeechKit error");
-                    }
-                    speechData = textToSpechResult.Result.ToByteArray();
+                    case Enums.Language.English:
+                        this._language = SynthesisLanguage.English;
+                        break;
+                    case Enums.Language.Russian:
+                        this._language = SynthesisLanguage.Russian;
+                        break;
+                    default:
+                        throw new Exceptions.InvalidLanguageException(language.ToString());
                 }
             }
-            return speechData;
+            public async Task<byte[]> Invork(string text)
+            {
+                byte[] speechData;
+                var apiSetttings = new SpeechKitClientOptions("b10e4ccd-e306-4725-a1c0-75b447ef79f2", "MashaWebApi", Guid.Empty, "server");
+                using (var client = new SpeechKitClient(apiSetttings))
+                {
+                    var options = new SynthesisOptions(text, 1.3)
+                    {
+                        AudioFormat = SynthesisAudioFormat.Wav,
+                        Language    = _language,
+                        Emotion     = Emotion.Good,
+                        Quality     = SynthesisQuality.High,
+                        Speaker     = Speaker.Omazh
+                    };
+
+                    using (var textToSpechResult = await client.TextToSpeechAsync(options, cancellationToken).ConfigureAwait(false))
+                    {
+                        if (textToSpechResult.TransportStatus != TransportStatus.Ok || textToSpechResult.ResponseCode != HttpStatusCode.OK)
+                        {
+                            throw new Exception("YandexSpeechKit error");
+                        }
+                        speechData = textToSpechResult.Result.ToByteArray();
+                    }
+                }
+                return speechData;
+            }
         }
     }
 

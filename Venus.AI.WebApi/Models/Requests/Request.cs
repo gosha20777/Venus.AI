@@ -17,7 +17,7 @@ namespace Venus.AI.WebApi.Models.Requests
                 if (value != null && value >= 0)
                     _id = value.Value;
                 else
-                    throw new InvalidIdRequestExcrption(value);
+                    throw new InvalidIdExcrption();
             }
         }
     }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Venus.AI.WebApi.Models.Exceptions
 {
-    public class InvalidIdExcrption : Exception
+    public class InvalidTextDataException : Exception
     {
-        public InvalidIdExcrption() : base("invalid Id")
+        public InvalidTextDataException() : base("Invalid text data")
         {
         }
     }
