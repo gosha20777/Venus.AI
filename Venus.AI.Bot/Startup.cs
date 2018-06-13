@@ -35,6 +35,9 @@ namespace Venus.AI.Bot
             }
 
             app.UseMvc();
+
+            //Bot Configurations
+            Models.Bot.GetBotClientAsync().Wait();
         }
     }
 }

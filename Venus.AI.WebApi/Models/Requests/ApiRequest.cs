@@ -10,17 +10,63 @@ namespace Venus.AI.WebApi.Models.Requests
     public class ApiRequest : Request
     {
         private byte[] _voiceData;
+        private string _textData;
         private Language _language;
+        private RequestType _requestType;
 
         public byte[] VoiceData
         {
             get { return _voiceData; }
             set
             {
-                if (value != null && value.Any())
+                if (_requestType == Enums.RequestType.Voice && value != null && value.Any())
                     _voiceData = value;
                 else
                     throw new ApiRequestException(Id, new InvalidVoiceDataException());
+            }
+        }
+
+        public string TextData
+        {
+            get { return _textData; }
+            set
+            {
+                if (_requestType == Enums.RequestType.Text && !string.IsNullOrWhiteSpace(value))
+                    _textData = value;
+                else
+                    throw new ApiRequestException(Id, new InvalidTextDataException());
+                _textData = value;
+            }
+        }
+
+        public string RequestType
+        {
+            get
+            {
+                switch (_requestType)
+                {
+                    case Enums.RequestType.Voice:
+                        return "voice";
+                    case Enums.RequestType.Text:
+                        return "text";
+                    default:
+                        throw new ApiRequestException(Id, new Exception($"Invalid RequestType {_requestType.ToString()}"));
+                }
+            }
+            set
+            {
+                value = value.ToLower();
+                switch (value)
+                {
+                    case "voice":
+                        _requestType = Enums.RequestType.Voice;
+                        break;
+                    case "text":
+                        _requestType = Enums.RequestType.Text;
+                        break;
+                    default:
+                        throw new ApiRequestException(Id, new Exception($"Invalid RequestType {value}"));
+                }
             }
         }
 
@@ -58,6 +104,11 @@ namespace Venus.AI.WebApi.Models.Requests
         public Language GetLanguage()
         {
             return _language;
+        }
+
+        public RequestType GetRequestType()
+        {
+            return _requestType;
         }
     }
 }

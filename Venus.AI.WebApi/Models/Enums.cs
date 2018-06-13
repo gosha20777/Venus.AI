@@ -12,5 +12,10 @@ namespace Venus.AI.WebApi.Models
             Russian,
             English
         }
+        public enum RequestType
+        {
+            Voice,
+            Text
+        }
     }
 }

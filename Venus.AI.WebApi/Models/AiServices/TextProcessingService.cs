@@ -24,7 +24,6 @@ namespace Venus.AI.WebApi.Models.AiServices
             private const bool SHOW_DEBUG_INFO = true;
 
             private static ApiAiSDK.ApiAi apiAi;
-            private static ApiAiSDK.RequestExtras requestExtras;
             private readonly string tocken = "768c62bfc2f04af2be7c85c47fabd3b2";
 
             public void Initialize(Enums.Language language)
@@ -42,13 +41,13 @@ namespace Venus.AI.WebApi.Models.AiServices
                         throw new Exceptions.InvalidLanguageException(language.ToString());
                 }
                 apiAi = new ApiAiSDK.ApiAi(config);
-                requestExtras = new ApiAiSDK.RequestExtras();
             }
 
             public string Invork(string inputText)
             {
                 ApiAiSDK.Model.AIResponse aiResponse;
-                aiResponse = apiAi.TextRequest(inputText, requestExtras);
+                var requestExtras = new ApiAiSDK.RequestExtras();
+                aiResponse = apiAi.TextRequest(inputText, StsticContext.GetContext());
 
                 if (aiResponse == null)
                     throw new Exception("Invalid output message");
@@ -74,7 +73,8 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     requestExtras.Contexts.Add(aIContext);
                 }
-
+                StsticContext.SetContext(requestExtras);
+                requestExtras = null;
                 var outputText = aiResponse.Result.Fulfillment.Speech;
 
                 //DEBUG INFO
@@ -85,8 +85,6 @@ namespace Venus.AI.WebApi.Models.AiServices
                     Console.WriteLine("Masha: " + outputText);
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
                     Console.WriteLine("BOT CONTEXTS:");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine("# Paremetr Name");
                     foreach (var context in aiResponse.Result.Contexts)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -99,6 +97,16 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     Console.ForegroundColor = ConsoleColor.Gray;
                 }
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("BOT PARAMS:");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("\tName\t\t\t|Value");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                foreach (var parametr in aiResponse.Result.Parameters)
+                {
+                    Console.WriteLine("\t{0,-23} |{1}", parametr.Key, parametr.Value);
+                }
+                Console.ForegroundColor = ConsoleColor.Gray;
                 #endregion
                 return outputText;
             }

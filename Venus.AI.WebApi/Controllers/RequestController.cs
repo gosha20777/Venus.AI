@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Venus.AI.WebApi.Models;
 using Venus.AI.WebApi.Models.AiServices;
 using Venus.AI.WebApi.Models.Requests;
 using Venus.AI.WebApi.Models.Respones;
@@ -29,28 +30,45 @@ namespace Venus.AI.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody]string requestStr)
+        public async Task<IActionResult> PostAsync([FromBody]ApiRequest apiRequest)
         {
             try
             {
-                ApiRequest apiRequest = JsonConvert.DeserializeObject<ApiRequest>(requestStr);
+                //ApiRequest apiRequest = JsonConvert.DeserializeObject<ApiRequest>(requestStr);
                 //convert speech to text
-                _speechToTextService.Initialize(apiRequest.GetLanguage());
-                var inputText = await _speechToTextService.Invork(apiRequest.VoiceData);
-                //recognize text and make text answer
-                _textProcessingService.Initialize(apiRequest.GetLanguage());
-                var outputText = _textProcessingService.Invork(inputText);
-                //convert text to speech
-                _textToSpeechService.Initialize(apiRequest.GetLanguage());
-                var speechData = await _textToSpeechService.Invork(outputText);
-                //make a respone
-                ApiRespone apiRespone = new ApiRespone
+                if(apiRequest.GetRequestType() == Enums.RequestType.Voice)
                 {
-                    Id = apiRequest.Id.Value,
-                    VoiceData = speechData,
-                    OuputText = outputText
-                };
-                return Ok(apiRespone);
+                    _speechToTextService.Initialize(apiRequest.GetLanguage());
+                    var inputText = await _speechToTextService.Invork(apiRequest.VoiceData);
+                    //recognize text and make text answer
+                    _textProcessingService.Initialize(apiRequest.GetLanguage());
+                    var outputText = _textProcessingService.Invork(inputText);
+                    //convert text to speech
+                    _textToSpeechService.Initialize(apiRequest.GetLanguage());
+                    var speechData = await _textToSpeechService.Invork(outputText);
+                    //make a respone
+                    ApiRespone apiRespone = new ApiRespone
+                    {
+                        Id = apiRequest.Id.Value,
+                        VoiceData = speechData,
+                        OuputText = outputText
+                    };
+                    return Ok(apiRespone);
+                }
+                else
+                {
+                    //recognize text and make text answer
+                    _textProcessingService.Initialize(apiRequest.GetLanguage());
+                    var outputText = _textProcessingService.Invork(apiRequest.TextData);
+                    //make a respone
+                    ApiRespone apiRespone = new ApiRespone
+                    {
+                        Id = apiRequest.Id.Value,
+                        VoiceData = null,
+                        OuputText = outputText
+                    };
+                    return Ok(apiRespone);
+                }
             }
             catch (Exception ex)
             {
