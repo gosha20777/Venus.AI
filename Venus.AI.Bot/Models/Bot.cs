@@ -27,7 +27,7 @@ namespace Venus.AI.Bot.Models
             //TODO: Add more commands
 
             botClient = new TelegramBotClient(AppSettings.Key);
-            string hook = string.Format(AppSettings.Url, "api/message/update");
+            string hook = string.Format(AppSettings.Url, "api/message");
             await botClient.SetWebhookAsync(hook);
             return botClient;
         }
