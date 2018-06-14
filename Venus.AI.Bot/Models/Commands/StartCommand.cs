@@ -22,7 +22,7 @@ namespace Venus.AI.Bot.Models.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
-            await botClient.SendTextMessageAsync(chatId, "Hallo I'm Masha Ai bot", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+            await botClient.SendTextMessageAsync(chatId, "Hallo I'm Masha Ai bot g", parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
         }
     }
 }
