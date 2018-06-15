@@ -17,7 +17,7 @@ The project has a micro service architecture. The scheme of the project is shown
 
 ![main architecture](Docs/Imgs/05.png "product characteristic improving service")
 
-![speech to text converting service](Docs/Imges/06.png "speech to text converting service")
+![speech to text converting service](Docs/Imgs/06.png "speech to text converting service")
 
 #### API usage
 Post rquest:
