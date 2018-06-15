@@ -7,7 +7,7 @@ The Project is developing now. You may join us! Please write to gosha20777@live.
 #### Project architecture
 The project has a micro service architecture. The scheme of the project is shown below.
 
-![main architecture](Docs/Imges/01.png "main architecture")
+![main architecture](Docs/Imgs/01.png "main architecture")
 
 ![text to speech converting service](Docs/Imgs/02.png "text to speech converting service")
 
