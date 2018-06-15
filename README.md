@@ -9,13 +9,13 @@ The project has a micro service architecture. The scheme of the project is shown
 
 ![main architecture](Docs/Imges/01.png "main architecture")
 
-![text to speech converting service](Docs/Imges/02.png "text to speech converting service")
+![text to speech converting service](Docs/Imgs/02.png "text to speech converting service")
 
-![text processing service](Docs/Imges/03.png "text processing service")
+![text processing service](Docs/Imgs/03.png "text processing service")
 
-![symantic tags service](Docs/Imges/04.png "symantic tags service")
+![symantic tags service](Docs/Imgs/04.png "symantic tags service")
 
-![main architecture](Docs/Imges/05.png "product characteristic improving service")
+![main architecture](Docs/Imgs/05.png "product characteristic improving service")
 
 ![speech to text converting service](Docs/Imges/06.png "speech to text converting service")
 
