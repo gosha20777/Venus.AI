@@ -42,16 +42,18 @@ namespace Venus.AI.WebApi.Controllers
                     var inputText = await _speechToTextService.Invork(apiRequest.VoiceData);
                     //recognize text and make text answer
                     _textProcessingService.Initialize(apiRequest.GetLanguage());
-                    var outputText = _textProcessingService.Invork(inputText);
+                    var textProcessingRespone = _textProcessingService.Invork(inputText);
                     //convert text to speech
                     _textToSpeechService.Initialize(apiRequest.GetLanguage());
-                    var speechData = await _textToSpeechService.Invork(outputText);
+                    var speechData = await _textToSpeechService.Invork(textProcessingRespone.OutputText);
                     //make a respone
                     ApiRespone apiRespone = new ApiRespone
                     {
                         Id = apiRequest.Id.Value,
                         VoiceData = speechData,
-                        OuputText = outputText
+                        OuputText = textProcessingRespone.OutputText,
+                        IntentName = textProcessingRespone.IntentName,
+                        Entities = textProcessingRespone.Entities
                     };
                     return Ok(apiRespone);
                 }
@@ -59,13 +61,15 @@ namespace Venus.AI.WebApi.Controllers
                 {
                     //recognize text and make text answer
                     _textProcessingService.Initialize(apiRequest.GetLanguage());
-                    var outputText = _textProcessingService.Invork(apiRequest.TextData);
+                    var textProcessingRespone = _textProcessingService.Invork(apiRequest.TextData);
                     //make a respone
                     ApiRespone apiRespone = new ApiRespone
                     {
                         Id = apiRequest.Id.Value,
                         VoiceData = null,
-                        OuputText = outputText
+                        OuputText = textProcessingRespone.OutputText,
+                        IntentName = textProcessingRespone.IntentName,
+                        Entities = textProcessingRespone.Entities
                     };
                     return Ok(apiRespone);
                 }

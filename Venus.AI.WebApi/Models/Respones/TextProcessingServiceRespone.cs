@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Venus.AI.WebApi.Models.Respones
 {
-    public class ApiRespone : Respone
+    [JsonObject]
+    public class TextProcessingServiceRespone
     {
-        public byte[] VoiceData { get; set; }
-        public string OuputText { get; set; }
+        [JsonProperty("outputText")]
+        public string OutputText { get; set; }
+        [JsonProperty("intentName")]
         public string IntentName { get; set; }
+        [JsonProperty("entities")]
         public Dictionary<string, string> Entities { get; set; } = new Dictionary<string, string>();
     }
 }

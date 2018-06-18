@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Venus.AI.WebApi.Models.Respones;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
@@ -14,9 +15,15 @@ namespace Venus.AI.WebApi.Models.AiServices
             _apiAi.Initialize(language);
         }
 
-        public string Invork(string inputText)
+        public TextProcessingServiceRespone Invork(string inputText)
         {
-            return _apiAi.Invork(inputText);
+            var respone = _apiAi.Invork(inputText);
+            if (respone.IntentName == "input.unknown")
+            {
+                //TODO: Invork talk servise
+                respone.IntentName = "none";
+            }
+            return respone;
         }
 
         private class ApiAiService : IService
@@ -43,8 +50,9 @@ namespace Venus.AI.WebApi.Models.AiServices
                 apiAi = new ApiAiSDK.ApiAi(config);
             }
 
-            public string Invork(string inputText)
+            public TextProcessingServiceRespone Invork(string inputText)
             {
+                TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone();
                 ApiAiSDK.Model.AIResponse aiResponse;
                 var requestExtras = new ApiAiSDK.RequestExtras();
                 aiResponse = apiAi.TextRequest(inputText, StsticContext.GetContext());
@@ -75,12 +83,36 @@ namespace Venus.AI.WebApi.Models.AiServices
                 }
                 StsticContext.SetContext(requestExtras);
                 requestExtras = null;
-                var outputText = aiResponse.Result.Fulfillment.Speech;
+                textProcessingServiceRespone.OutputText = aiResponse.Result.Fulfillment.Speech;
+
+
+                if (!string.IsNullOrWhiteSpace(aiResponse.Result.Action))
+                {
+                    foreach (var parametr in aiResponse.Result.Parameters)
+                    {
+                        if (!string.IsNullOrWhiteSpace(parametr.Value.ToString()))
+                            textProcessingServiceRespone.Entities.Add(parametr.Key, parametr.Value.ToString());
+                    }
+                    textProcessingServiceRespone.IntentName = aiResponse.Result.Action;
+                }
+                else
+                    textProcessingServiceRespone.IntentName = "none";
 
                 //DEBUG INFO
                 #region DebugInfo
                 if (SHOW_DEBUG_INFO)
                 {
+                    Console.WriteLine("BOT PARAMS:");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("Intent {0}", textProcessingServiceRespone.IntentName);
+                    Console.WriteLine("\tName\t\t\t|Value");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    foreach (var parametr in textProcessingServiceRespone.Entities)
+                    {
+                        Console.WriteLine("\t{0,-23} |{1}", parametr.Key, parametr.Value);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    /*
                     Console.WriteLine("User: " + inputText);
                     Console.WriteLine("Masha: " + outputText);
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -96,19 +128,22 @@ namespace Venus.AI.WebApi.Models.AiServices
                             Console.WriteLine("\t{0,-23} |{1}", parameter.Key, parameter.Value);
                     }
                     Console.ForegroundColor = ConsoleColor.Gray;
+
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    Console.WriteLine("BOT PARAMS:");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("\tName\t\t\t|Value");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    foreach (var parametr in aiResponse.Result.Parameters)
+                    {
+                        Console.WriteLine("\t{0,-23} |{1}", parametr.Key, parametr.Value);
+                    }
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    */
                 }
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.WriteLine("BOT PARAMS:");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("\tName\t\t\t|Value");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                foreach (var parametr in aiResponse.Result.Parameters)
-                {
-                    Console.WriteLine("\t{0,-23} |{1}", parametr.Key, parametr.Value);
-                }
-                Console.ForegroundColor = ConsoleColor.Gray;
+
                 #endregion
-                return outputText;
+                return textProcessingServiceRespone;
             }
         }
     }
