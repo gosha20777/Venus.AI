@@ -7,7 +7,7 @@ The Project is developing now. You may join us! Please write to gosha20777@live.
 #### Project architecture
 The project has a micro service architecture. The scheme of the project is shown below.
 
-![main architecture](Docs/Imges/01.png "main architecture")
+![main architecture](Docs/Imgs/01.png "main architecture")
 
 ![text to speech converting service](Docs/Imgs/02.png "text to speech converting service")
 
@@ -17,7 +17,7 @@ The project has a micro service architecture. The scheme of the project is shown
 
 ![main architecture](Docs/Imgs/05.png "product characteristic improving service")
 
-![speech to text converting service](Docs/Imges/06.png "speech to text converting service")
+![speech to text converting service](Docs/Imgs/06.png "speech to text converting service")
 
 #### API usage
 Post rquest:
