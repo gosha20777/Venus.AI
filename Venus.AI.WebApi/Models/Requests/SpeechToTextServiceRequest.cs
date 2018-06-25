@@ -11,7 +11,7 @@ namespace Venus.AI.WebApi.Models.Requests
     {
         [JsonProperty("language")]
         public string Language { get; set; }
-        [JsonProperty("speechData")]
-        public byte[] SpeechData { get; set; }
+        [JsonProperty("voiceData")]
+        public byte[] VoicehData { get; set; }
     }
 }

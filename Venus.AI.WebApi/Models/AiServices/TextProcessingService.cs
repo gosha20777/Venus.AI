@@ -9,10 +9,14 @@ namespace Venus.AI.WebApi.Models.AiServices
     public class TextProcessingService : IService
     {
         private ApiAiService _apiAi;
+        private RnnTalkService _rnnTalkService;
         public void Initialize(Enums.Language language)
         {
             _apiAi = new ApiAiService();
             _apiAi.Initialize(language);
+
+            _rnnTalkService = new RnnTalkService();
+            _rnnTalkService.Initialize(language);
         }
 
         public TextProcessingServiceRespone Invork(string inputText)
@@ -20,12 +24,12 @@ namespace Venus.AI.WebApi.Models.AiServices
             var respone = _apiAi.Invork(inputText);
             if (respone.IntentName == "input.unknown")
             {
-                //TODO: Invork talk servise
-                respone.IntentName = "none";
+                respone = _rnnTalkService.Invork(inputText);
             }
             return respone;
         }
 
+        #region DialogFlow
         private class ApiAiService : IService
         {
             private const bool SHOW_DEBUG_INFO = true;
@@ -146,5 +150,24 @@ namespace Venus.AI.WebApi.Models.AiServices
                 return textProcessingServiceRespone;
             }
         }
+        #endregion
+        #region RnnTalkService
+        private class RnnTalkService : IService
+        {
+            public void Initialize(Enums.Language language)
+            {
+            }
+
+            public TextProcessingServiceRespone Invork(string inputText)
+            {
+                TextProcessingServiceRespone respone = new TextProcessingServiceRespone
+                {
+                    IntentName = "none",
+                    OutputText = "TextProcessingServiceRespone"
+                };
+                return respone;
+            }
+        }
+        #endregion
     }
 }

@@ -12,17 +12,25 @@ namespace Venus.AI.WebApi.Models.AiServices
     public class SpeechToTextService : IService
     {
         private GoogleSpeechService _googleSpeechService;
+        private WaweNetService _waweNetService;
         public void Initialize(Enums.Language language)
         {
             _googleSpeechService = new GoogleSpeechService();
             _googleSpeechService.Initialize(language);
+
+            _waweNetService = new WaweNetService();
+            _waweNetService.Initialize(language);
         }
 
         public async Task<string> Invork(byte[] voiceData)
         {
-            return await _googleSpeechService.Invork(voiceData);
+            var respone = await _waweNetService.Invork(voiceData);
+            if(respone.SucsessProbabitity < 0.8)
+                return await _googleSpeechService.Invork(voiceData);
+            return respone.Text;
         }
 
+        #region GoogleSpeechService
         private class GoogleSpeechService : IService
         {
             private string _language;
@@ -64,5 +72,25 @@ namespace Venus.AI.WebApi.Models.AiServices
                 return result;
             }
         }
+        #endregion
+
+        #region WaweNetService
+        private class WaweNetService : IService
+        {
+            public void Initialize(Enums.Language language)
+            {
+            }
+
+            public async Task<SpeechToTextServiceRespone> Invork(byte[] voiceData)
+            {
+                SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone
+                {
+                    Text = "SpeechToTextServiceRespone",
+                    SucsessProbabitity = 0.1
+                };
+                return respone;
+            }
+        }
+        #endregion
     }
 }
