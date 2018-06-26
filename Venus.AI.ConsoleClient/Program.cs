@@ -7,7 +7,7 @@ namespace Venus.AI.ConsoleClient
 {
     class Program
     {
-        private const bool SHOW_DEBUG_INFO = false;
+        private const bool SHOW_DEBUG_INFO = true;
         static void Main(string[] args)
         {
             Console.WriteLine("Venus.AI console client");

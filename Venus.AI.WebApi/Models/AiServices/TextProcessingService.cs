@@ -24,8 +24,10 @@ namespace Venus.AI.WebApi.Models.AiServices
             var respone = _apiAi.Invork(inputText);
             if (respone.IntentName == "input.unknown")
             {
-                respone = _rnnTalkService.Invork(inputText);
+                //respone = _rnnTalkService.Invork(inputText);
             }
+            Console.WriteLine("User> {0}", inputText);
+            Console.WriteLine("Venus.AI> {0}", respone.OutputText);
             return respone;
         }
 

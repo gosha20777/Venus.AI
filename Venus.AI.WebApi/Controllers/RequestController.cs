@@ -76,6 +76,7 @@ namespace Venus.AI.WebApi.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return BadRequest(ex);
             }
         }

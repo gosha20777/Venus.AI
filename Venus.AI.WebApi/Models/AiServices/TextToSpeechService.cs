@@ -46,7 +46,7 @@ namespace Venus.AI.WebApi.Models.AiServices
             public async Task<byte[]> Invork(string text)
             {
                 byte[] speechData;
-                var apiSetttings = new SpeechKitClientOptions("b10e4ccd-e306-4725-a1c0-75b447ef79f2", "MashaWebApi", Guid.Empty, "server");
+                var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
                 using (var client = new SpeechKitClient(apiSetttings))
                 {
                     var options = new SynthesisOptions(text, 1.3)
@@ -62,7 +62,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                     {
                         if (textToSpechResult.TransportStatus != TransportStatus.Ok || textToSpechResult.ResponseCode != HttpStatusCode.OK)
                         {
-                            throw new Exception("YandexSpeechKit error");
+                            throw new Exception("YandexSpeechKit error: " + textToSpechResult.ResponseCode.ToString());
                         }
                         speechData = textToSpechResult.Result.ToByteArray();
                     }

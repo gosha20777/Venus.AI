@@ -6,6 +6,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Venus.AI.WebApi.Models.Requests;
 using Venus.AI.WebApi.Models.Respones;
+using Venus.AI.WebApi.Models.Utils;
+using Newtonsoft.Json;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
@@ -77,18 +79,50 @@ namespace Venus.AI.WebApi.Models.AiServices
         #region WaweNetService
         private class WaweNetService : IService
         {
+            private string _language;
             public void Initialize(Enums.Language language)
             {
+                switch (language)
+                {
+                    case Enums.Language.English:
+                        this._language = "eng";
+                        break;
+                    case Enums.Language.Russian:
+                        this._language = "rus";
+                        break;
+                    default:
+                        throw new Exceptions.InvalidLanguageException(language.ToString());
+                }
             }
 
             public async Task<SpeechToTextServiceRespone> Invork(byte[] voiceData)
             {
-                SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone
-                {
-                    Text = "SpeechToTextServiceRespone",
-                    SucsessProbabitity = 0.1
-                };
+                SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone();
+                respone.Text = "1";
+                respone.SucsessProbabitity = 0;
                 return respone;
+                /*
+                RestApiClient.Сonfigure("http://192.168.88.66:5000/");
+                SpeechToTextServiceRequest request = new SpeechToTextServiceRequest
+                {
+                    Language = _language,
+                    VoicehData = voiceData
+                };
+                if (RestApiClient.Connect())
+                {
+                    Console.WriteLine("SENDING!!!!!!");
+                    string jsonResp = await RestApiClient.PostAsync(JsonConvert.SerializeObject(request));
+                    Console.WriteLine(jsonResp);
+                    return JsonConvert.DeserializeObject<SpeechToTextServiceRespone>(jsonResp);
+                }
+                else
+                {
+                    SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone();
+                    respone.Text = "1";
+                    respone.SucsessProbabitity = 0;
+                    return respone;
+                }
+                */
             }
         }
         #endregion
