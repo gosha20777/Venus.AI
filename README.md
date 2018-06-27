@@ -20,6 +20,9 @@ The project has a micro service architecture. The scheme of the project is shown
 ![speech to text converting service](Docs/Imgs/06.png "speech to text converting service")
 
 #### API usage
+
+you should send a post request to http://192.168.88.150:50567/api/request end point.
+
 Post rquest:
 ```json
 {
@@ -38,8 +41,10 @@ Post respone:
 	"outputText": "<string, text answer>",
 	"intentName": "string, name of user intent accoding to trained model",
 	"entities":   
-		[
-			{"entity_name": "entity_value"}
-		]
+		{
+			"entity_name1": "entity_value1",
+			"entity_name2": "entity_value2"
+			...
+		}
 }
 ``` 
