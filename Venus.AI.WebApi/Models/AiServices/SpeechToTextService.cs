@@ -8,29 +8,34 @@ using Venus.AI.WebApi.Models.Requests;
 using Venus.AI.WebApi.Models.Respones;
 using Venus.AI.WebApi.Models.Utils;
 using Newtonsoft.Json;
+using ITCC.YandexSpeechKitClient;
+using ITCC.YandexSpeechKitClient.Enums;
+using System.Threading;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
     public class SpeechToTextService : IService
     {
+        private YandexSpeechKitService _yandexSpeechKitServiceService;
         private GoogleSpeechService _googleSpeechService;
-        private WaweNetService _waweNetService;
+        //private WaweNetService _waweNetService;
         public void Initialize(Enums.Language language)
         {
+            _yandexSpeechKitServiceService = new YandexSpeechKitService();
+            _yandexSpeechKitServiceService.Initialize(language);
             _googleSpeechService = new GoogleSpeechService();
             _googleSpeechService.Initialize(language);
 
-            _waweNetService = new WaweNetService();
-            _waweNetService.Initialize(language);
+            //_waweNetService = new WaweNetService();
+            //_waweNetService.Initialize(language);
         }
 
         public async Task<string> Invork(byte[] voiceData)
         {
-            var respone = await _waweNetService.Invork(voiceData);
-            if(respone.SucsessProbabitity < 0.8)
-                return await _googleSpeechService.Invork(voiceData);
-            return respone.Text;
+            return await _googleSpeechService.Invork(voiceData);
+            //return await _yandexSpeechKitServiceService.Invork(voiceData);
         }
+
 
         #region GoogleSpeechService
         private class GoogleSpeechService : IService
@@ -76,6 +81,63 @@ namespace Venus.AI.WebApi.Models.AiServices
         }
         #endregion
 
+        #region YandexSpeechKitService
+        private class YandexSpeechKitService : IService
+        {
+            private RecognitionLanguage _language;
+            private CancellationToken cancellationToken;
+
+            public void Initialize(Enums.Language language)
+            {
+                switch (language)
+                {
+                    case Enums.Language.English:
+                        this._language = RecognitionLanguage.English;
+                        break;
+                    case Enums.Language.Russian:
+                        this._language = RecognitionLanguage.Russian;
+                        break;
+                    default:
+                        throw new Exceptions.InvalidLanguageException(language.ToString());
+                }
+            }
+            public async Task<string> Invork(byte[] voiceData)
+            {
+                var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
+
+                using (var client = new SpeechKitClient(apiSetttings))
+                {
+                    var speechRecognitionOptions = new SpeechRecognitionOptions(SpeechModel.Queries, RecognitionAudioFormat.Pcm16K, _language);
+                    try
+                    {
+                        Stream mediaStream = new MemoryStream(voiceData);
+                        var result = await client.SpeechToTextAsync(speechRecognitionOptions, mediaStream, cancellationToken).ConfigureAwait(false);
+                        if (result.TransportStatus != TransportStatus.Ok || result.StatusCode != HttpStatusCode.OK)
+                        {
+                            throw new Exception("YandexSpeechKit error: " + result.TransportStatus.ToString());
+                        }
+
+                        if (!result.Result.Success)
+                        {
+                            throw new Exception("Unable to recognize speech"); 
+                        }
+
+                        Console.WriteLine(result);
+
+                        var utterances = result.Result.Variants;
+                        //Use recognition results
+                        return utterances.First().Text;
+
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+        }
+        #endregion
+
         #region WaweNetService
         private class WaweNetService : IService
         {
@@ -97,11 +159,6 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             public async Task<SpeechToTextServiceRespone> Invork(byte[] voiceData)
             {
-                SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone();
-                respone.Text = "1";
-                respone.SucsessProbabitity = 0;
-                return respone;
-                /*
                 RestApiClient.Сonfigure("http://192.168.88.66:5000/");
                 SpeechToTextServiceRequest request = new SpeechToTextServiceRequest
                 {
@@ -110,19 +167,16 @@ namespace Venus.AI.WebApi.Models.AiServices
                 };
                 if (RestApiClient.Connect())
                 {
-                    Console.WriteLine("SENDING!!!!!!");
                     string jsonResp = await RestApiClient.PostAsync(JsonConvert.SerializeObject(request));
-                    Console.WriteLine(jsonResp);
                     return JsonConvert.DeserializeObject<SpeechToTextServiceRespone>(jsonResp);
                 }
                 else
                 {
                     SpeechToTextServiceRespone respone = new SpeechToTextServiceRespone();
-                    respone.Text = "1";
+                    respone.Text = "unll";
                     respone.SucsessProbabitity = 0;
                     return respone;
                 }
-                */
             }
         }
         #endregion
