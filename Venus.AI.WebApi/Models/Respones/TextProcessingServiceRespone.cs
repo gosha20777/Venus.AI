@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 namespace Venus.AI.WebApi.Models.Respones
 {
     [JsonObject]
-    public class TextProcessingServiceRespone
+    public class TextProcessingServiceRespone : TextRespone
     {
-        [JsonProperty("outputText")]
-        public string OutputText { get; set; }
+        [JsonProperty("id")]
+        public new long Id { get; set; }
+        [JsonProperty("textData")]
+        public new string TextData { get; set; }
         [JsonProperty("intentName")]
         public string IntentName { get; set; }
         [JsonProperty("entities")]

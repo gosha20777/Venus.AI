@@ -39,38 +39,44 @@ namespace Venus.AI.WebApi.Controllers
                 if(apiRequest.GetRequestType() == Enums.RequestType.Voice)
                 {
                     _speechToTextService.Initialize(apiRequest.GetLanguage());
-                    var inputText = await _speechToTextService.Invork(apiRequest.VoiceData);
+                    var textServiceRespone = await _speechToTextService.Invork(new VoiceRequest() { Id = apiRequest.Id, VoiceData = apiRequest.VoiceData });
                     //recognize text and make text answer
                     _textProcessingService.Initialize(apiRequest.GetLanguage());
-                    var textProcessingRespone = _textProcessingService.Invork(inputText);
+                    var textProcessingRespone = await _textProcessingService.Invork(new TextRequest() { Id = textServiceRespone.Id, TextData = textServiceRespone.TextData });
                     //convert text to speech
                     _textToSpeechService.Initialize(apiRequest.GetLanguage());
-                    var speechData = await _textToSpeechService.Invork(textProcessingRespone.OutputText);
+                    var speechServiceRespone = await _textToSpeechService.Invork(new TextRequest() { Id = textProcessingRespone.Id, TextData = textProcessingRespone.TextData });
                     //make a respone
                     ApiRespone apiRespone = new ApiRespone
                     {
-                        Id = apiRequest.Id.Value,
-                        VoiceData = speechData,
-                        OuputText = textProcessingRespone.OutputText,
+                        Id = speechServiceRespone.Id,
+                        VoiceData = speechServiceRespone.VoiceData,
+                        OuputText = textProcessingRespone.TextData,
                         IntentName = textProcessingRespone.IntentName,
                         Entities = textProcessingRespone.Entities
                     };
+
+                    textServiceRespone = null;
+                    textProcessingRespone = null;
+                    speechServiceRespone = null;
                     return Ok(apiRespone);
                 }
                 else
                 {
                     //recognize text and make text answer
                     _textProcessingService.Initialize(apiRequest.GetLanguage());
-                    var textProcessingRespone = _textProcessingService.Invork(apiRequest.TextData);
+                    var textProcessingRespone = await _textProcessingService.Invork(new TextRequest() { Id = apiRequest.Id, TextData = apiRequest.TextData });
                     //make a respone
                     ApiRespone apiRespone = new ApiRespone
                     {
                         Id = apiRequest.Id.Value,
                         VoiceData = null,
-                        OuputText = textProcessingRespone.OutputText,
+                        OuputText = textProcessingRespone.TextData,
                         IntentName = textProcessingRespone.IntentName,
                         Entities = textProcessingRespone.Entities
                     };
+
+                    textProcessingRespone = null;
                     return Ok(apiRespone);
                 }
             }

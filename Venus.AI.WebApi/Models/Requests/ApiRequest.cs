@@ -7,7 +7,7 @@ using static Venus.AI.WebApi.Models.Enums;
 
 namespace Venus.AI.WebApi.Models.Requests
 {
-    public class ApiRequest : Request
+    public class ApiRequest : BaseRequest
     {
         private byte[] _voiceData;
         private string _textData;

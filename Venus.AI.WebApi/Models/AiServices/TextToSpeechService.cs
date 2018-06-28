@@ -7,29 +7,31 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Venus.AI.WebApi.Models.Requests;
+using Venus.AI.WebApi.Models.Respones;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
-    public class TextToSpeechService : IService
+    public class TextToSpeechService : BaseTextToSpeechService
     {
         private YandexSpeechKitService _yandexSpeechKitService;
-        public void Initialize(Enums.Language language)
+        public override void Initialize(Enums.Language language)
         {
             _yandexSpeechKitService = new YandexSpeechKitService();
             _yandexSpeechKitService.Initialize(language);
         }
 
-        public async Task<byte[]> Invork(string text)
+        public override async Task<VoiceRespone> Invork(TextRequest textRequest)
         {
-            return await _yandexSpeechKitService.Invork(text);
+            return await _yandexSpeechKitService.Invork(textRequest);
         }
 
-        private class YandexSpeechKitService : IService
+        private class YandexSpeechKitService : BaseTextToSpeechService
         {
             private readonly CancellationToken cancellationToken = new CancellationToken();
             private SynthesisLanguage _language;
             
-            public void Initialize(Enums.Language language)
+            public override void Initialize(Enums.Language language)
             {
                 switch (language)
                 {
@@ -43,13 +45,13 @@ namespace Venus.AI.WebApi.Models.AiServices
                         throw new Exceptions.InvalidLanguageException(language.ToString());
                 }
             }
-            public async Task<byte[]> Invork(string text)
+            public override async Task<VoiceRespone> Invork(TextRequest textRequest)
             {
-                byte[] speechData;
+                VoiceRespone voiceRespone = new VoiceRespone() { Id = textRequest.Id.Value };
                 var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
                 using (var client = new SpeechKitClient(apiSetttings))
                 {
-                    var options = new SynthesisOptions(text, 1.3)
+                    var options = new SynthesisOptions(textRequest.TextData, 1.3)
                     {
                         AudioFormat = SynthesisAudioFormat.Wav,
                         Language    = _language,
@@ -64,10 +66,10 @@ namespace Venus.AI.WebApi.Models.AiServices
                         {
                             throw new Exception("YandexSpeechKit error: " + textToSpechResult.ResponseCode.ToString());
                         }
-                        speechData = textToSpechResult.Result.ToByteArray();
+                        voiceRespone.VoiceData = textToSpechResult.Result.ToByteArray();
                     }
                 }
-                return speechData;
+                return voiceRespone;
             }
         }
     }

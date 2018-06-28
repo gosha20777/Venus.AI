@@ -14,34 +14,33 @@ using System.Threading;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
-    public class SpeechToTextService : IService
+    public class SpeechToTextService : BaseSpeechToTextService
     {
-        private YandexSpeechKitService _yandexSpeechKitServiceService;
         private GoogleSpeechService _googleSpeechService;
+        //private YandexSpeechKitService _yandexSpeechKitServiceService;
         //private WaweNetService _waweNetService;
-        public void Initialize(Enums.Language language)
+        public override void Initialize(Enums.Language language)
         {
-            _yandexSpeechKitServiceService = new YandexSpeechKitService();
-            _yandexSpeechKitServiceService.Initialize(language);
             _googleSpeechService = new GoogleSpeechService();
             _googleSpeechService.Initialize(language);
 
+            //_yandexSpeechKitServiceService = new GoogleSpeechService();
+            //_yandexSpeechKitServiceService.Initialize(language);
             //_waweNetService = new WaweNetService();
             //_waweNetService.Initialize(language);
         }
 
-        public async Task<string> Invork(byte[] voiceData)
+        public override async Task<TextRespone> Invork(VoiceRequest request)
         {
-            return await _googleSpeechService.Invork(voiceData);
-            //return await _yandexSpeechKitServiceService.Invork(voiceData);
+            return await _googleSpeechService.Invork(request);
         }
 
 
         #region GoogleSpeechService
-        private class GoogleSpeechService : IService
+        private class GoogleSpeechService : BaseSpeechToTextService
         {
             private string _language;
-            public void Initialize(Enums.Language language)
+            public override void Initialize(Enums.Language language)
             {
                 switch (language)
                 {
@@ -55,16 +54,17 @@ namespace Venus.AI.WebApi.Models.AiServices
                         throw new Exceptions.InvalidLanguageException(language.ToString());
                 }
             }
-            public async Task<string> Invork(byte[] voiceData)
+
+            public override async Task<TextRespone> Invork(VoiceRequest request)
             {
                 string result = string.Empty;
-                WebRequest request = WebRequest.Create($"https://www.google.com/speech-api/v2/recognize?output=json&lang={_language}&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
-                request.Method = "POST";
-                request.ContentType = "audio/l16; rate=16000"; //"16000";
-                request.ContentLength = voiceData.Length;
-                await request.GetRequestStream().WriteAsync(voiceData, 0, voiceData.Length);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                using (var streamReader = new StreamReader(response.GetResponseStream()))
+                WebRequest webRequest = WebRequest.Create($"https://www.google.com/speech-api/v2/recognize?output=json&lang={_language}&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
+                webRequest.Method = "POST";
+                webRequest.ContentType = "audio/l16; rate=16000"; //"16000";
+                webRequest.ContentLength = request.VoiceData.Length;
+                await webRequest.GetRequestStream().WriteAsync(request.VoiceData, 0, request.VoiceData.Length);
+                HttpWebResponse webResponse = (HttpWebResponse)await webRequest.GetResponseAsync();
+                using (var streamReader = new StreamReader(webResponse.GetResponseStream()))
                 {
                     var jsonResult = await streamReader.ReadToEndAsync();
                     try
@@ -76,7 +76,12 @@ namespace Venus.AI.WebApi.Models.AiServices
                     catch { throw new Exceptions.InvalidTextDataException(); }
                     finally { if (string.IsNullOrWhiteSpace(result)) throw new Exceptions.InvalidTextDataException(); }
                 }
-                return result;
+                TextRespone respone = new TextRespone()
+                {
+                    Id = request.Id.Value,
+                    TextData = result
+                };
+                return respone;
             }
         }
         #endregion

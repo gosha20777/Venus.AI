@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 using Venus.AI.WebApi.Models.Respones;
 using Venus.AI.WebApi.Models.Utils;
 using Newtonsoft.Json;
+using Venus.AI.WebApi.Models.Requests;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
-    public class TextProcessingService : IService
+    public class TextProcessingService : BaseTextProcessingService
     {
         private ApiAiService _apiAi;
         private RnnTalkService _rnnTalkService;
-        public void Initialize(Enums.Language language)
+        public override void Initialize(Enums.Language language)
         {
             _apiAi = new ApiAiService();
             _apiAi.Initialize(language);
@@ -25,27 +26,28 @@ namespace Venus.AI.WebApi.Models.AiServices
             _rnnTalkService.Initialize(language);
         }
 
-        public TextProcessingServiceRespone Invork(string inputText)
+        public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
         {
-            var respone = _apiAi.Invork(inputText);
+            var respone = await _apiAi.Invork(textRequest);
+            respone.Id = textRequest.Id.Value;
             if (respone.IntentName == "input.unknown")
             {
-                respone = _rnnTalkService.Invork(inputText);
+                respone = await _rnnTalkService.Invork(textRequest);
             }
-            Console.WriteLine("User> {0}", inputText);
-            Console.WriteLine("Venus.AI> {0}", respone.OutputText);
+            Console.WriteLine("User> {0}", textRequest.TextData);
+            Console.WriteLine("Venus.AI> {0}", respone.TextData);
             return respone;
         }
 
         #region DialogFlow
-        private class ApiAiService : IService
+        private class ApiAiService : BaseTextProcessingService
         {
             private const bool SHOW_DEBUG_INFO = true;
 
             private static ApiAiSDK.ApiAi apiAi;
             private readonly string tocken = "b753a131dba74e5d8fe0fe2d60cd4b2b";
 
-            public void Initialize(Enums.Language language)
+            public override void Initialize(Enums.Language language)
             {
                 ApiAiSDK.AIConfiguration config;
                 switch (language)
@@ -62,13 +64,14 @@ namespace Venus.AI.WebApi.Models.AiServices
                 apiAi = new ApiAiSDK.ApiAi(config);
             }
 
-            public TextProcessingServiceRespone Invork(string inputText)
+            public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
             {
-                TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone();
+                TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone() { Id = textRequest.Id.Value };
                 ApiAiSDK.Model.AIResponse aiResponse;
                 var requestExtras = new ApiAiSDK.RequestExtras();
-                aiResponse = apiAi.TextRequest(inputText, StsticContext.GetContext());
+                aiResponse = apiAi.TextRequest(textRequest.TextData, StsticContext.GetContext());
 
+                //TODO: Update Exceptions
                 if (aiResponse == null)
                     throw new Exception("Invalid output message");
 
@@ -95,7 +98,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 }
                 StsticContext.SetContext(requestExtras);
                 requestExtras = null;
-                textProcessingServiceRespone.OutputText = aiResponse.Result.Fulfillment.Speech;
+                textProcessingServiceRespone.TextData = aiResponse.Result.Fulfillment.Speech;
 
 
                 if (!string.IsNullOrWhiteSpace(aiResponse.Result.Action))
@@ -160,39 +163,41 @@ namespace Venus.AI.WebApi.Models.AiServices
         }
         #endregion
         #region RnnTalkService
-        private class RnnTalkService : IService
+        private class RnnTalkService : BaseTextProcessingService
         {
             private Enums.Language _language;
-            public void Initialize(Enums.Language language)
+            public override void Initialize(Enums.Language language)
             {
                 this._language = language;
             }
 
-            public TextProcessingServiceRespone Invork(string inputText)
+            public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
             {
                 TextProcessingServiceRespone respone = new TextProcessingServiceRespone
                 {
                     IntentName = "none",
-                    OutputText = ""
+                    TextData = ""
                 };
 
                 if (_language == Enums.Language.Russian)
                 {
-                    inputText = TextTranslator.Translate(inputText, Enums.Language.Russian, Enums.Language.English);
+                    textRequest.TextData = TextTranslator.Translate(textRequest.TextData, Enums.Language.Russian, Enums.Language.English);
                 }
                 
                 RestApiClient.Сonfigure("http://192.168.88.66:5000/");
+                //TODO: replase RnnTalkServiceMessage to TextRequest
                 RnnTalkServiceMessage message = new RnnTalkServiceMessage()
                 {
-                    TextData = inputText
+                    TextData = textRequest.TextData
                 };
-                string responeRnn = RestApiClient.Post(JsonConvert.SerializeObject(message));
+                string responeRnn = await RestApiClient.PostAsync(JsonConvert.SerializeObject(message));
                 message = JsonConvert.DeserializeObject<RnnTalkServiceMessage>(responeRnn);
                 Console.WriteLine(">>>" + message.TextData);
+
                 if (_language == Enums.Language.Russian)
                     message.TextData = TextTranslator.Translate(message.TextData, Enums.Language.English, Enums.Language.Russian);
-                respone.OutputText = message.TextData;
 
+                respone.TextData = message.TextData;
                 return respone;
             }
             [JsonObject]
@@ -237,7 +242,7 @@ namespace Venus.AI.WebApi.Models.AiServices
 
                             word = "";
 
-                            foreach (string str in translation.text)
+                            foreach (string str in translation.Text)
                             {
                                 word += str;
                             }
@@ -268,9 +273,9 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             class Translation
             {
-                public string code { get; set; }
-                public string lang { get; set; }
-                public string[] text { get; set; }
+                public string Code { get; set; }
+                public string Lang { get; set; }
+                public string[] Text { get; set; }
             }
         }
         #endregion

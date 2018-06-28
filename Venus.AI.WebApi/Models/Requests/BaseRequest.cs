@@ -6,7 +6,7 @@ using Venus.AI.WebApi.Models.Exceptions;
 
 namespace Venus.AI.WebApi.Models.Requests
 {
-    public abstract class Request
+    public abstract class BaseRequest
     {
         private long _id;
         public long? Id

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Venus.AI.WebApi.Models.Respones
 {
-    public abstract class Respone
+    public class VoiceRespone : BaseRespone
     {
-        public long Id { get; set; }
+        public byte[] VoiceData { get; set; }
     }
 }
