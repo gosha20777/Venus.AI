@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using ITCC.YandexSpeechKitClient;
 using ITCC.YandexSpeechKitClient.Enums;
 using System.Threading;
+using NAudio.Wave;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
@@ -32,6 +33,15 @@ namespace Venus.AI.WebApi.Models.AiServices
 
         public override async Task<TextRespone> Invork(VoiceRequest request)
         {
+            //AudioConvertor
+            byte[] testSequence = request.VoiceData;
+            using (WaveFileWriter writer = new WaveFileWriter($"{request.Id}.wav", new WaveFormat(16000, 1)))
+            {
+                writer.Write(testSequence, 0, testSequence.Length);
+            }
+            request.VoiceData = File.ReadAllBytes($"{request.Id}.wav");
+            File.Delete($"{request.Id}.wav");
+            
             return await _googleSpeechService.Invork(request);
         }
 

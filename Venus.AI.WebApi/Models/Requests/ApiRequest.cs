@@ -21,7 +21,7 @@ namespace Venus.AI.WebApi.Models.Requests
             {
                 if (_requestType == Enums.RequestType.Voice && value != null && value.Any())
                     _voiceData = value;
-                else
+                else if (_requestType == Enums.RequestType.Voice)
                     throw new ApiRequestException(Id, new InvalidVoiceDataException());
             }
         }
@@ -33,7 +33,7 @@ namespace Venus.AI.WebApi.Models.Requests
             {
                 if (_requestType == Enums.RequestType.Text && !string.IsNullOrWhiteSpace(value))
                     _textData = value;
-                else
+                else if (_requestType == Enums.RequestType.Text)
                     throw new ApiRequestException(Id, new InvalidTextDataException());
                 _textData = value;
             }
