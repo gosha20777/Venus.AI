@@ -15,6 +15,8 @@ namespace Venus.AI.WebApi.Models.Respones
         public new string TextData { get; set; }
         [JsonProperty("intentName")]
         public string IntentName { get; set; }
+        [JsonProperty("wayPoint")]
+        public string WayPoint { get; set; }
         [JsonProperty("entities")]
         public Dictionary<string, string> Entities { get; set; } = new Dictionary<string, string>();
     }

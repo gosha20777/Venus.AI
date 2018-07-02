@@ -106,7 +106,18 @@ namespace Venus.AI.WebApi.Models.AiServices
                     foreach (var parametr in aiResponse.Result.Parameters)
                     {
                         if (!string.IsNullOrWhiteSpace(parametr.Value.ToString()))
+                        {
                             textProcessingServiceRespone.Entities.Add(parametr.Key, parametr.Value.ToString());
+                            if (parametr.Value.ToString().Contains("dress"))
+                                textProcessingServiceRespone.WayPoint = "adidas";
+                            else if(parametr.Value.ToString().Contains("furniture"))
+                                textProcessingServiceRespone.WayPoint = "ikea";
+                            else if (parametr.Value.ToString().ToLower().Contains("ikea"))
+                                textProcessingServiceRespone.WayPoint = "ikea";
+                            else if (parametr.Value.ToString().ToLower().Contains("adidas"))
+                                textProcessingServiceRespone.WayPoint = "adidas";
+                        }
+                            
                     }
                     textProcessingServiceRespone.IntentName = aiResponse.Result.Action;
                 }
@@ -126,6 +137,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                     {
                         Console.WriteLine("\t{0,-23} |{1}", parametr.Key, parametr.Value);
                     }
+                    Console.WriteLine(textProcessingServiceRespone.WayPoint);
                     Console.ForegroundColor = ConsoleColor.Gray;
                     /*
                     Console.WriteLine("User: " + inputText);

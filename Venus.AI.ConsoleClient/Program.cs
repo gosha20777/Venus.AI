@@ -28,7 +28,7 @@ namespace Venus.AI.ConsoleClient
                 inputMessage.RequestType = "voice";
                 inputMessage.Id = 1;
                 inputMessage.VoiceData = System.IO.File.ReadAllBytes("demo.wav");
-                RestApiClient.Сonfigure(@"http://localhost:50567/api/request");
+                RestApiClient.Сonfigure(@"http://192.168.88.150:50567/api/request");
                 string err;
                 bool isConnect = RestApiClient.Connect(out err);
 

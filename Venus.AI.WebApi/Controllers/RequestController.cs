@@ -53,7 +53,8 @@ namespace Venus.AI.WebApi.Controllers
                         VoiceData = speechServiceRespone.VoiceData,
                         OuputText = textProcessingRespone.TextData,
                         IntentName = textProcessingRespone.IntentName,
-                        Entities = textProcessingRespone.Entities
+                        Entities = textProcessingRespone.Entities,
+                        WayPoint = textProcessingRespone.WayPoint
                     };
 
                     textServiceRespone = null;

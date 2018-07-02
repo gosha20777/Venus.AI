@@ -11,5 +11,6 @@ namespace Venus.AI.WebApi.Models.Respones
         public string OuputText { get; set; }
         public string IntentName { get; set; }
         public Dictionary<string, string> Entities { get; set; } = new Dictionary<string, string>();
+        public string WayPoint { get; set; }
     }
 }
