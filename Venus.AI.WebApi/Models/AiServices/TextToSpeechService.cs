@@ -51,7 +51,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
                 using (var client = new SpeechKitClient(apiSetttings))
                 {
-                    var options = new SynthesisOptions(textRequest.TextData, 1.3)
+                    var options = new SynthesisOptions(textRequest.TextData, 1.1)
                     {
                         AudioFormat = SynthesisAudioFormat.Wav,
                         Language    = _language,

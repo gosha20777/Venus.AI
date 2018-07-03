@@ -7,16 +7,25 @@ namespace Venus.AI.WebApi.Models
 {
     public static class StsticContext
     {
-        private static ApiAiSDK.RequestExtras _requestExtras;
-        public static ApiAiSDK.RequestExtras GetContext()
+        private static Dictionary<long, ApiAiSDK.RequestExtras> _requestExtras = new Dictionary<long, ApiAiSDK.RequestExtras>();
+        public static ApiAiSDK.RequestExtras GetContext(long id)
         {
-            if (_requestExtras == null)
-                _requestExtras = new ApiAiSDK.RequestExtras();
-            return _requestExtras;
+            if (_requestExtras.TryGetValue(id, out ApiAiSDK.RequestExtras val))
+                return val;
+            else
+            {
+                val = new ApiAiSDK.RequestExtras(); 
+                _requestExtras.Add(id, val);
+                return val;
+            }
+                
         }
-        public static void SetContext(ApiAiSDK.RequestExtras requestExtras)
+        public static void SetContext(ApiAiSDK.RequestExtras requestExtras, long id)
         {
-            _requestExtras = requestExtras;
+            if (_requestExtras.ContainsKey(id))
+                _requestExtras[id] = requestExtras;
+            else
+                _requestExtras.Add(id, requestExtras);
         }
     }
 }

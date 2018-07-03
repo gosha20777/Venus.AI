@@ -69,7 +69,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone() { Id = textRequest.Id.Value };
                 ApiAiSDK.Model.AIResponse aiResponse;
                 var requestExtras = new ApiAiSDK.RequestExtras();
-                aiResponse = apiAi.TextRequest(textRequest.TextData, StsticContext.GetContext());
+                aiResponse = apiAi.TextRequest(textRequest.TextData, StsticContext.GetContext(textRequest.Id.Value));
 
                 //TODO: Update Exceptions
                 if (aiResponse == null)
@@ -96,7 +96,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     requestExtras.Contexts.Add(aIContext);
                 }
-                StsticContext.SetContext(requestExtras);
+                StsticContext.SetContext(requestExtras, textRequest.Id.Value);
                 requestExtras = null;
                 textProcessingServiceRespone.TextData = aiResponse.Result.Fulfillment.Speech;
 
@@ -128,7 +128,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 #region DebugInfo
                 if (SHOW_DEBUG_INFO)
                 {
-                    Console.WriteLine("BOT PARAMS:");
+                    Console.WriteLine("Id: {0} | BOT PARAMS:", textRequest.Id.Value);
                     Console.ForegroundColor = ConsoleColor.Gray;
                     Console.WriteLine("Intent {0}", textProcessingServiceRespone.IntentName);
                     Console.WriteLine("\tName\t\t\t|Value");
