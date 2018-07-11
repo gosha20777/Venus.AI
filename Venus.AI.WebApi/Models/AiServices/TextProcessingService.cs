@@ -191,12 +191,10 @@ namespace Venus.AI.WebApi.Models.AiServices
                     TextData = ""
                 };
 
-                if (_language == Enums.Language.Russian)
-                {
-                    textRequest.TextData = TextTranslator.Translate(textRequest.TextData, Enums.Language.Russian, Enums.Language.English);
-                }
-                
-                RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrl}");
+                if (_language == Enums.Language.English)
+                    RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrl}");
+                else if (_language == Enums.Language.Russian)
+                    RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrlRu}");
                 //TODO: replase RnnTalkServiceMessage to TextRequest
                 RnnTalkServiceMessage message = new RnnTalkServiceMessage()
                 {
@@ -204,10 +202,6 @@ namespace Venus.AI.WebApi.Models.AiServices
                 };
                 string responeRnn = await RestApiClient.PostAsync(JsonConvert.SerializeObject(message));
                 message = JsonConvert.DeserializeObject<RnnTalkServiceMessage>(responeRnn);
-                Console.WriteLine(">>>" + message.TextData);
-
-                if (_language == Enums.Language.Russian)
-                    message.TextData = TextTranslator.Translate(message.TextData, Enums.Language.English, Enums.Language.Russian);
 
                 respone.TextData = message.TextData;
                 return respone;

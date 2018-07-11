@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Venus.AI.WebApi.Models
 {
     [JsonObject]
-    public static class AppConfig
+    public class AppConfig
     {
         [JsonProperty("googleSpeechApiKey")]
         public static string GoogleSpeechApiKey { get; set; }
@@ -17,7 +17,9 @@ namespace Venus.AI.WebApi.Models
         public static string YandexSpeechApiKey { get; set; }
         [JsonProperty("yandexTranslatorKey")]
         public static string YandexTranslatorKey { get; set; }
-        [JsonProperty("rnnTalkServiceUrl")]
+        [JsonProperty("rnnTalkServiceUrl_en")]
         public static string RnnTalkServiceUrl { get; set; }
+        [JsonProperty("rnnTalkServiceUrl_ru")]
+        public static string RnnTalkServiceUrlRu { get; set; }
     }
 }

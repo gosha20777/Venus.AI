@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Venus.AI.WebApi
 {
@@ -35,6 +37,16 @@ namespace Venus.AI.WebApi
             }
 
             app.UseMvc();
+
+            //app configure
+            var config  = JsonConvert.DeserializeObject<Models.AppConfig>(File.ReadAllText("appconfig.json"));
+            Console.WriteLine("Settings:\n\t" +
+                $"ApiAiKey           : {Models.AppConfig.ApiAiKey}\n\t" +
+                $"GoogleSpeechApiKey : {Models.AppConfig.GoogleSpeechApiKey}\n\t" +
+                $"YandexSpeechApiKey : {Models.AppConfig.YandexSpeechApiKey}\n\t" +
+                $"YandexTranslatorKey: {Models.AppConfig.YandexTranslatorKey}\n\t" +
+                $"RnnTalkServiceUrlEn: {Models.AppConfig.RnnTalkServiceUrl}\n\t" +
+                $"RnnTalkServiceUrlRu: {Models.AppConfig.RnnTalkServiceUrlRu}\n");
         }
     }
 }
