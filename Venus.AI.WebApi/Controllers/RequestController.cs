@@ -84,7 +84,22 @@ namespace Venus.AI.WebApi.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return BadRequest(ex);
+                string outputFailText = "Я не расслышала, что вы сказали. Пожалуйста, повторите ваш запрос";
+                if (apiRequest.GetLanguage() == Enums.Language.English)
+                    outputFailText = "I did not hear what you said. Please repeat your request";
+                _textToSpeechService.Initialize(apiRequest.GetLanguage());
+                var speechServiceRespone = await _textToSpeechService.Invork(new TextRequest() { Id = apiRequest.Id, TextData = outputFailText });
+                ApiRespone apiRespone = new ApiRespone
+                {
+                    Id = speechServiceRespone.Id,
+                    VoiceData = speechServiceRespone.VoiceData,
+                    OuputText = outputFailText,
+                    IntentName = "none",
+                    Entities = null,
+                    WayPoint = null
+                };
+                speechServiceRespone = null;
+                return Ok(apiRespone);
             }
         }
     }

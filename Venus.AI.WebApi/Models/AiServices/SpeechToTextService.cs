@@ -68,7 +68,7 @@ namespace Venus.AI.WebApi.Models.AiServices
             public override async Task<TextRespone> Invork(VoiceRequest request)
             {
                 string result = string.Empty;
-                WebRequest webRequest = WebRequest.Create($"https://www.google.com/speech-api/v2/recognize?output=json&lang={_language}&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
+                WebRequest webRequest = WebRequest.Create($"https://www.google.com/speech-api/v2/recognize?output=json&lang={_language}&key={AppConfig.GoogleSpeechApiKey}");
                 webRequest.Method = "POST";
                 webRequest.ContentType = "audio/l16; rate=16000"; //"16000";
                 webRequest.ContentLength = request.VoiceData.Length;
@@ -118,7 +118,7 @@ namespace Venus.AI.WebApi.Models.AiServices
             }
             public async Task<string> Invork(byte[] voiceData)
             {
-                var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
+                var apiSetttings = new SpeechKitClientOptions($"{AppConfig.YandexSpeechApiKey}", "MashaWebApi", Guid.Empty, "server");
 
                 using (var client = new SpeechKitClient(apiSetttings))
                 {

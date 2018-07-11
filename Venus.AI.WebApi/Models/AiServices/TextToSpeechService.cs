@@ -48,7 +48,7 @@ namespace Venus.AI.WebApi.Models.AiServices
             public override async Task<VoiceRespone> Invork(TextRequest textRequest)
             {
                 VoiceRespone voiceRespone = new VoiceRespone() { Id = textRequest.Id.Value };
-                var apiSetttings = new SpeechKitClientOptions("4f2562b1-7519-413f-b3ae-17b52789e3ae", "MashaWebApi", Guid.Empty, "server");
+                var apiSetttings = new SpeechKitClientOptions($"{AppConfig.YandexSpeechApiKey}", "MashaWebApi", Guid.Empty, "server");
                 using (var client = new SpeechKitClient(apiSetttings))
                 {
                     var options = new SynthesisOptions(textRequest.TextData, 1.1)

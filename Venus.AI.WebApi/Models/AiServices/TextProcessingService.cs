@@ -45,7 +45,7 @@ namespace Venus.AI.WebApi.Models.AiServices
             private const bool SHOW_DEBUG_INFO = true;
 
             private static ApiAiSDK.ApiAi apiAi;
-            private readonly string tocken = "b753a131dba74e5d8fe0fe2d60cd4b2b";
+            private readonly string tocken = $"{AppConfig.ApiAiKey}";
 
             public override void Initialize(Enums.Language language)
             {
@@ -196,7 +196,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                     textRequest.TextData = TextTranslator.Translate(textRequest.TextData, Enums.Language.Russian, Enums.Language.English);
                 }
                 
-                RestApiClient.Сonfigure("http://192.168.88.66:5000/");
+                RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrl}");
                 //TODO: replase RnnTalkServiceMessage to TextRequest
                 RnnTalkServiceMessage message = new RnnTalkServiceMessage()
                 {
@@ -238,7 +238,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 {
                     string lang = SL + "-" + DL;
                     WebRequest request = WebRequest.Create("https://translate.yandex.net/api/v1.5/tr.json/translate?"
-                        + "key=trnsl.1.1.20180627T133735Z.619c9117248591b0.209b898c7425c156cc8461d105966542f3dd0629"
+                        + $"key={AppConfig.YandexTranslatorKey}"
                         + "&text=" + word
                         + "&lang=" + lang);
 
