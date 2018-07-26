@@ -174,15 +174,15 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             public async Task<SpeechToTextServiceRespone> Invork(byte[] voiceData)
             {
-                RestApiClient.Сonfigure("http://192.168.88.66:5000/");
+                RestApiClient client = new RestApiClient("http://192.168.88.66:5000/");
                 SpeechToTextServiceRequest request = new SpeechToTextServiceRequest
                 {
                     Language = _language,
                     VoicehData = voiceData
                 };
-                if (RestApiClient.Connect())
+                if (client.HostActive())
                 {
-                    string jsonResp = await RestApiClient.PostAsync(JsonConvert.SerializeObject(request));
+                    string jsonResp = await client.PostAsync(JsonConvert.SerializeObject(request));
                     return JsonConvert.DeserializeObject<SpeechToTextServiceRespone>(jsonResp);
                 }
                 else

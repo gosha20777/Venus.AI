@@ -4,104 +4,114 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Venus.AI.WebApi.Models.AiServices;
 
 namespace Venus.AI.WebApi.Models.Utils
 {
-    internal static class RestApiClient
+    internal class RestApiClient
     {
-        private static WebRequest _webRequest;
-        private static string _baseUrl;
+        private string _baseUrl;
 
-        public static void Сonfigure(string url)
+        public RestApiClient(string baseUrl)
         {
-            _baseUrl = url;
+            _baseUrl = baseUrl;
         }
-
-        public static bool Connect()
+        #region Ping
+        public bool HostActive()
         {
-            HttpResponseMessage response;
-            using (HttpClient httpClient = new HttpClient())
+            using(Ping p = new Ping())
             {
-                httpClient.BaseAddress = new Uri(_baseUrl);
-                response = httpClient.GetAsync(httpClient.BaseAddress).Result;
+                string host = _baseUrl;
+                bool result = false;
+                try
+                {
+                    PingReply reply = p.Send(host, 2000);
+                    if (reply.Status == IPStatus.Success)
+                        return true;
+                }
+                catch { }
+                return result;
             }
-            if (response.StatusCode == HttpStatusCode.OK)
-                return true;
-            else
-                return false;
+            
         }
-        public static async Task<bool> ConnectAsync()
+        public async Task<bool> IsHostActiveAsync()
         {
-            HttpResponseMessage response;
-            using (HttpClient httpClient = new HttpClient())
+            using (Ping p = new Ping())
             {
-                httpClient.BaseAddress = new Uri(_baseUrl);
-                response = await httpClient.GetAsync(httpClient.BaseAddress);
+                string host = _baseUrl;
+                bool result = false;
+                try
+                {
+                    PingReply reply = await p.SendPingAsync(host, 2000);
+                    if (reply.Status == IPStatus.Success)
+                        return true;
+                }
+                catch { }
+                return result;
             }
-            if (response.StatusCode == HttpStatusCode.OK)
-                return true;
-            else
-                return false;
+
         }
-
-        public static string Post(string jsonString)
+        #endregion
+        #region Get
+        public string Get()
         {
-            _webRequest = WebRequest.Create(_baseUrl);
-            _webRequest.ContentType = "application/json; charset=utf-8";
-            _webRequest.Method = "POST";
+            WebRequest webRequest = WebRequest.Create(_baseUrl);
+            using (WebResponse resp = webRequest.GetResponse())
+            using (Stream stream = resp.GetResponseStream())
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                return sr.ReadToEnd();
+            }
+        }
+        public async Task<string> GetAsync()
+        {
+            WebRequest webRequest = WebRequest.Create(_baseUrl);
 
-            using (var streamWriter = new StreamWriter(_webRequest.GetRequestStream()))
+            using (WebResponse resp = webRequest.GetResponse())
+            using (Stream stream = resp.GetResponseStream())
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                return await sr.ReadToEndAsync();
+            }
+        }
+        #endregion
+        #region Post
+        public string Post(string jsonString)
+        {
+            WebRequest webRequest = WebRequest.Create(_baseUrl);
+            webRequest.ContentType = "application/json; charset=utf-8";
+            webRequest.Method = "POST";
+
+            using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
             {
                 streamWriter.Write(jsonString);
                 streamWriter.Flush();
             }
-            var httpResponse = _webRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using (WebResponse resp = webRequest.GetResponse())
+            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
             {
-                string result = streamReader.ReadToEnd();
-                return result;
+                return sr.ReadToEnd();
             }
         }
-        public static async Task<string> PostAsync(string jsonString)
+        public async Task<string> PostAsync(string jsonString)
         {
-            _webRequest = WebRequest.Create(_baseUrl);
-            _webRequest.ContentType = "application/json; charset=utf-8";
-            _webRequest.Method = "POST";
+            WebRequest webRequest = WebRequest.Create(_baseUrl);
+            webRequest.ContentType = "application/json; charset=utf-8";
+            webRequest.Method = "POST";
 
-            using (var streamWriter = new StreamWriter(await _webRequest.GetRequestStreamAsync()))
+            using (var streamWriter = new StreamWriter(webRequest.GetRequestStream()))
             {
                 await streamWriter.WriteAsync(jsonString);
                 await streamWriter.FlushAsync();
             }
-            var httpResponse = await _webRequest.GetResponseAsync();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using (WebResponse resp = webRequest.GetResponse())
+            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
             {
-                string result = await streamReader.ReadToEndAsync();
-                return result;
+                return await sr.ReadToEndAsync();
             }
         }
-
-        public static string Get()
-        {
-            _webRequest = WebRequest.Create(_baseUrl);
-            var httpResponse = _webRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                string result = streamReader.ReadToEnd();
-                return result;
-            }
-        }
-        public static async Task<string> GetAsync()
-        {
-            _webRequest = WebRequest.Create(_baseUrl);
-            var httpResponse = await _webRequest.GetResponseAsync();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                string result = await streamReader.ReadToEndAsync();
-                return result;
-            }
-        }
+        #endregion
     }
 }

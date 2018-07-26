@@ -185,26 +185,37 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
             {
-                TextProcessingServiceRespone respone = new TextProcessingServiceRespone
+                using (RabbitMqClient client = new RabbitMqClient("localhost"))
                 {
-                    IntentName = "none",
-                    TextData = ""
-                };
+                    string inputQueue = "RnnTalkService", outputQueue = "RnnTalkService";
+                    TextProcessingServiceRespone respone = new TextProcessingServiceRespone
+                    {
+                        IntentName = "none",
+                        TextData = ""
+                    };
+                    if (_language == Enums.Language.English)
+                    {
+                        inputQueue += "_input_en";
+                        outputQueue += "_output_en";
+                    }
+                    else if (_language == Enums.Language.Russian)
+                    {
+                        inputQueue += "_input_ru";
+                        outputQueue += "_output_ru";
+                    }
 
-                if (_language == Enums.Language.English)
-                    RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrl}");
-                else if (_language == Enums.Language.Russian)
-                    RestApiClient.Сonfigure($"{AppConfig.RnnTalkServiceUrlRu}");
-                //TODO: replase RnnTalkServiceMessage to TextRequest
-                RnnTalkServiceMessage message = new RnnTalkServiceMessage()
-                {
-                    TextData = textRequest.TextData
-                };
-                string responeRnn = await RestApiClient.PostAsync(JsonConvert.SerializeObject(message));
-                message = JsonConvert.DeserializeObject<RnnTalkServiceMessage>(responeRnn);
+                    //TODO: replase RnnTalkServiceMessage to TextRequest
+                    RnnTalkServiceMessage message = new RnnTalkServiceMessage()
+                    {
+                        TextData = textRequest.TextData
+                    };
+                    string responeRnn;
+                    responeRnn = await client.PostAsync(JsonConvert.SerializeObject(message), inputQueue, outputQueue);
+                    message = JsonConvert.DeserializeObject<RnnTalkServiceMessage>(responeRnn);
 
-                respone.TextData = message.TextData;
-                return respone;
+                    respone.TextData = message.TextData;
+                    return respone;
+                }
             }
             [JsonObject]
             private class RnnTalkServiceMessage
