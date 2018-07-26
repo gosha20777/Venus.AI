@@ -86,7 +86,9 @@ namespace Venus.AI.WebApi.Models.Utils
                                      routingKey: inputQueue,
                                      basicProperties: null,
                                      body: body);
-
+            }
+            using (var channel = _connection.CreateModel())
+            {
                 channel.QueueDeclare(queue: outputQueue,
                                      durable: false,
                                      exclusive: false,
@@ -97,13 +99,14 @@ namespace Venus.AI.WebApi.Models.Utils
                 var consumer = new EventingBasicConsumer(channel);
                 consumer.Received += (model, ea) =>
                 {
-                    body = ea.Body;
+                    var body = ea.Body;
                     var result = Encoding.UTF8.GetString(body);
                     tcs.SetResult(result);
                 };
                 channel.BasicConsume(queue: outputQueue,
                                      autoAck: true,
                                      consumer: consumer);
+                
                 return await tcs.Task;
             }
         }

@@ -190,6 +190,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                     string inputQueue = "RnnTalkService", outputQueue = "RnnTalkService";
                     TextProcessingServiceRespone respone = new TextProcessingServiceRespone
                     {
+                        Id = textRequest.Id.Value,
                         IntentName = "none",
                         TextData = ""
                     };
@@ -205,15 +206,12 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
 
                     //TODO: replase RnnTalkServiceMessage to TextRequest
-                    RnnTalkServiceMessage message = new RnnTalkServiceMessage()
-                    {
-                        TextData = textRequest.TextData
-                    };
+                    
                     string responeRnn;
-                    responeRnn = await client.PostAsync(JsonConvert.SerializeObject(message), inputQueue, outputQueue);
-                    message = JsonConvert.DeserializeObject<RnnTalkServiceMessage>(responeRnn);
+                    responeRnn = await client.PostAsync(JsonConvert.SerializeObject(textRequest), inputQueue, outputQueue);
+                    var textRespone = JsonConvert.DeserializeObject<TextRespone>(responeRnn);
 
-                    respone.TextData = message.TextData;
+                    respone.TextData = textRespone.TextData;
                     return respone;
                 }
             }
