@@ -4,16 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Venus.AI.WebApi.Models.Exceptions;
 using static Venus.AI.WebApi.Models.Enums;
+using Newtonsoft.Json;
 
 namespace Venus.AI.WebApi.Models.Requests
 {
+    [JsonObject]
     public class ApiRequest : BaseRequest
     {
         private byte[] _voiceData;
         private string _textData;
         private Language _language;
         private RequestType _requestType;
-
+        [JsonProperty("voiceData")]
         public byte[] VoiceData
         {
             get { return _voiceData; }
@@ -25,7 +27,7 @@ namespace Venus.AI.WebApi.Models.Requests
                     throw new ApiRequestException(Id, new InvalidVoiceDataException());
             }
         }
-
+        [JsonProperty("textData")]
         public string TextData
         {
             get { return _textData; }
@@ -38,7 +40,7 @@ namespace Venus.AI.WebApi.Models.Requests
                 _textData = value;
             }
         }
-
+        [JsonProperty("requestType")]
         public string RequestType
         {
             get
@@ -69,7 +71,7 @@ namespace Venus.AI.WebApi.Models.Requests
                 }
             }
         }
-
+        [JsonProperty("language")]
         public string Language
         {
             get

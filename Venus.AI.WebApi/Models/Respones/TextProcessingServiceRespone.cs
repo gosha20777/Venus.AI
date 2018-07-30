@@ -9,10 +9,6 @@ namespace Venus.AI.WebApi.Models.Respones
     [JsonObject]
     public class TextProcessingServiceRespone : TextRespone
     {
-        [JsonProperty("id")]
-        public new long Id { get; set; }
-        [JsonProperty("textData")]
-        public new string TextData { get; set; }
         [JsonProperty("intentName")]
         public string IntentName { get; set; }
         [JsonProperty("wayPoint")]

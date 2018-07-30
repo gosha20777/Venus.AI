@@ -69,7 +69,16 @@ namespace Venus.AI.WebApi.Models.AiServices
                 TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone() { Id = textRequest.Id.Value };
                 ApiAiSDK.Model.AIResponse aiResponse;
                 var requestExtras = new ApiAiSDK.RequestExtras();
-                aiResponse = apiAi.TextRequest(textRequest.TextData, StsticContext.GetContext(textRequest.Id.Value));
+                DBClient.Connect();
+                var context = DBClient.GetContext(textRequest.Id.Value);
+                
+                //Костыль
+                if (context != null && !string.IsNullOrWhiteSpace(context.IntentContext))
+                    requestExtras = JsonConvert.DeserializeObject<ApiAiSDK.RequestExtras>(context.IntentContext);
+                else if (context == null)
+                    context = new UserContext();
+
+                aiResponse = apiAi.TextRequest(textRequest.TextData, requestExtras);
 
                 //TODO: Update Exceptions
                 if (aiResponse == null)
@@ -96,7 +105,10 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     requestExtras.Contexts.Add(aIContext);
                 }
-                StsticContext.SetContext(requestExtras, textRequest.Id.Value);
+                Console.WriteLine(requestExtras.ToString());
+                Console.WriteLine(JsonConvert.SerializeObject(requestExtras));
+                context.IntentContext = JsonConvert.SerializeObject(requestExtras);
+                DBClient.InsertOrUpedateContext(context);
                 requestExtras = null;
                 textProcessingServiceRespone.TextData = aiResponse.Result.Fulfillment.Speech;
 
@@ -214,12 +226,6 @@ namespace Venus.AI.WebApi.Models.AiServices
                     respone.TextData = textRespone.TextData;
                     return respone;
                 }
-            }
-            [JsonObject]
-            private class RnnTalkServiceMessage
-            {
-                [JsonProperty("textData")]
-                public string TextData { get; set; }
             }
         }
 
