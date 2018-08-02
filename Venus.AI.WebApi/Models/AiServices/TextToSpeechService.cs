@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Venus.AI.WebApi.Models.Requests;
 using Venus.AI.WebApi.Models.Respones;
+using Venus.AI.WebApi.Models.Utils;
 
 namespace Venus.AI.WebApi.Models.AiServices
 {
@@ -23,7 +24,13 @@ namespace Venus.AI.WebApi.Models.AiServices
 
         public override async Task<VoiceRespone> Invork(TextRequest textRequest)
         {
-            return await _yandexSpeechKitService.Invork(textRequest);
+            var time = DateTime.Now;
+
+            var respone = await _yandexSpeechKitService.Invork(textRequest);
+
+            Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+
+            return respone;
         }
 
         private class YandexSpeechKitService : BaseTextToSpeechService

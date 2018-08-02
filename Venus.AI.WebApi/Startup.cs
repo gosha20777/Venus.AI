@@ -40,13 +40,15 @@ namespace Venus.AI.WebApi
 
             //app configure
             var config  = JsonConvert.DeserializeObject<Models.AppConfig>(File.ReadAllText("appconfig.json"));
-            Console.WriteLine("Settings:\n\t" +
+            string msg = "Settings:\n\t" +
                 $"ApiAiKey           : {Models.AppConfig.ApiAiKey}\n\t" +
                 $"GoogleSpeechApiKey : {Models.AppConfig.GoogleSpeechApiKey}\n\t" +
                 $"YandexSpeechApiKey : {Models.AppConfig.YandexSpeechApiKey}\n\t" +
                 $"YandexTranslatorKey: {Models.AppConfig.YandexTranslatorKey}\n\t" +
                 $"RnnTalkServiceUrlEn: {Models.AppConfig.RnnTalkServiceUrl}\n\t" +
-                $"RnnTalkServiceUrlRu: {Models.AppConfig.RnnTalkServiceUrlRu}\n");
+                $"RnnTalkServiceUrlRu: {Models.AppConfig.RnnTalkServiceUrlRu}\n";
+            Models.Utils.Log.Initialize();
+            Models.Utils.Log.LogInformation(-1, 0, this.GetType().ToString(), msg);
         }
     }
 }

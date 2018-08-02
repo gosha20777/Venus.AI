@@ -28,21 +28,26 @@ namespace Venus.AI.WebApi.Models.AiServices
 
         public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
         {
+            var time = DateTime.Now;
+
             var respone = await _apiAi.Invork(textRequest);
             respone.Id = textRequest.Id.Value;
             if (respone.IntentName == "input.unknown")
             {
                 respone = await _rnnTalkService.Invork(textRequest);
             }
-            Console.WriteLine("User> {0}", textRequest.TextData);
-            Console.WriteLine("Venus.AI> {0}", respone.TextData);
+            //Console.WriteLine("User> {0}", textRequest.TextData);
+            //Console.WriteLine("Venus.AI> {0}", respone.TextData);
+
+            Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+
             return respone;
         }
 
         #region DialogFlow
         private class ApiAiService : BaseTextProcessingService
         {
-            private const bool SHOW_DEBUG_INFO = true;
+            private const bool SHOW_DEBUG_INFO = false;
 
             private static ApiAiSDK.ApiAi apiAi;
             private readonly string tocken = $"{AppConfig.ApiAiKey}";
@@ -66,17 +71,17 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
             {
+                var time = DateTime.Now;
+
                 TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone() { Id = textRequest.Id.Value };
                 ApiAiSDK.Model.AIResponse aiResponse;
                 var requestExtras = new ApiAiSDK.RequestExtras();
                 DBClient.Connect();
                 var context = DBClient.GetContext(textRequest.Id.Value);
-                
+
                 //Костыль
-                if (context != null && !string.IsNullOrWhiteSpace(context.IntentContext))
+                if (!string.IsNullOrWhiteSpace(context.IntentContext))
                     requestExtras = JsonConvert.DeserializeObject<ApiAiSDK.RequestExtras>(context.IntentContext);
-                else if (context == null)
-                    context = new UserContext();
 
                 aiResponse = apiAi.TextRequest(textRequest.TextData, requestExtras);
 
@@ -105,8 +110,6 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     requestExtras.Contexts.Add(aIContext);
                 }
-                Console.WriteLine(requestExtras.ToString());
-                Console.WriteLine(JsonConvert.SerializeObject(requestExtras));
                 context.IntentContext = JsonConvert.SerializeObject(requestExtras);
                 DBClient.InsertOrUpedateContext(context);
                 requestExtras = null;
@@ -182,6 +185,9 @@ namespace Venus.AI.WebApi.Models.AiServices
                 }
 
                 #endregion
+
+                Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+
                 return textProcessingServiceRespone;
             }
         }
@@ -199,6 +205,8 @@ namespace Venus.AI.WebApi.Models.AiServices
             {
                 using (RabbitMqClient client = new RabbitMqClient("localhost"))
                 {
+                    var time = DateTime.Now;
+
                     string inputQueue = "RnnTalkService", outputQueue = "RnnTalkService";
                     TextProcessingServiceRespone respone = new TextProcessingServiceRespone
                     {
@@ -217,13 +225,22 @@ namespace Venus.AI.WebApi.Models.AiServices
                         outputQueue += "_output_ru";
                     }
 
-                    //TODO: replase RnnTalkServiceMessage to TextRequest
-                    
+                    var context = DBClient.GetContext(textRequest.Id.Value);
+                    RnnTalkSystemRequest talkSystemRequest = new RnnTalkSystemRequest();
+                    talkSystemRequest.Id = textRequest.Id;
+                    talkSystemRequest.TextData = textRequest.TextData;
+                    talkSystemRequest.TalkContext = context.TalkContext;
+                    talkSystemRequest.TalkReplicCount = context.TalkReplicCount;
                     string responeRnn;
-                    responeRnn = await client.PostAsync(JsonConvert.SerializeObject(textRequest), inputQueue, outputQueue);
-                    var textRespone = JsonConvert.DeserializeObject<TextRespone>(responeRnn);
+                    responeRnn = await client.PostAsync(JsonConvert.SerializeObject(talkSystemRequest), inputQueue, outputQueue);
+                    var talkSystemRespone = JsonConvert.DeserializeObject<RnnTalkSystemRespone>(responeRnn);
+                    context.TalkContext = talkSystemRespone.TalkContext;
+                    context.TalkReplicCount = talkSystemRespone.TalkReplicCount;
+                    DBClient.InsertOrUpedateContext(context);
+                    respone.TextData = talkSystemRespone.TextData;
 
-                    respone.TextData = textRespone.TextData;
+                    Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+
                     return respone;
                 }
             }

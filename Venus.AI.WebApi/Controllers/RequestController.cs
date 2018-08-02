@@ -9,6 +9,7 @@ using Venus.AI.WebApi.Models;
 using Venus.AI.WebApi.Models.AiServices;
 using Venus.AI.WebApi.Models.Requests;
 using Venus.AI.WebApi.Models.Respones;
+using Venus.AI.WebApi.Models.Utils;
 
 namespace Venus.AI.WebApi.Controllers
 {
@@ -34,6 +35,8 @@ namespace Venus.AI.WebApi.Controllers
         {
             try
             {
+                Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "processing voice request");
+                
                 //ApiRequest apiRequest = JsonConvert.DeserializeObject<ApiRequest>(requestStr);
                 //convert speech to text
                 if(apiRequest.GetRequestType() == Enums.RequestType.Voice)
@@ -60,10 +63,15 @@ namespace Venus.AI.WebApi.Controllers
                     textServiceRespone = null;
                     textProcessingRespone = null;
                     speechServiceRespone = null;
+
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "voice request processed");
+
                     return Ok(apiRespone);
                 }
                 else
                 {
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "processing text request");
+
                     //recognize text and make text answer
                     _textProcessingService.Initialize(apiRequest.GetLanguage());
                     var textProcessingRespone = await _textProcessingService.Invork(new TextRequest() { Id = apiRequest.Id, TextData = apiRequest.TextData });
@@ -78,12 +86,15 @@ namespace Venus.AI.WebApi.Controllers
                     };
 
                     textProcessingRespone = null;
+
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "text request processed");
+
                     return Ok(apiRespone);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Log.LogError(apiRequest.Id.Value, 0, this.GetType().ToString(), ex.Message);
                 string outputFailText = "Я не расслышала, что вы сказали. Пожалуйста, повторите ваш запрос";
                 if (apiRequest.GetLanguage() == Enums.Language.English)
                     outputFailText = "I did not hear what you said. Please repeat your request";

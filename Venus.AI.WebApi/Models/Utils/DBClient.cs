@@ -48,14 +48,17 @@ namespace Venus.AI.WebApi.Models.Utils
             if (reader.HasRows) // если есть данные
             {
                 reader.Close();
-                sqlExpression = $"UPDATE ContextTable SET IntentContext='{userContext.IntentContext}', TalkContext='{userContext.TalkContext}' WHERE Id={userContext.Id}";
+                sqlExpression = $"UPDATE ContextTable SET IntentContext='{userContext.IntentContext}', TalkContext='{userContext.TalkContext}', TalkReplicCount={userContext.TalkReplicCount} WHERE Id={userContext.Id}";
                 sqlCommand = new SqlCommand(sqlExpression, _connection);
                 sqlCommand.ExecuteNonQuery();
             }
             else
             {
                 reader.Close();
-                sqlExpression = $"INSERT INTO ContextTable (Id, IntentContext, TalkContext) VALUES ({userContext.Id}, '{userContext.IntentContext}', '{userContext.TalkContext}')";
+                sqlExpression = $"SET IDENTITY_INSERT ContextTable ON";
+                sqlCommand = new SqlCommand(sqlExpression, _connection);
+                sqlCommand.ExecuteNonQuery();
+                sqlExpression = $"INSERT INTO ContextTable (Id, IntentContext, TalkContext, TalkReplicCount) VALUES ({userContext.Id}, '{userContext.IntentContext}', '{userContext.TalkContext}', {userContext.TalkReplicCount})";
                 sqlCommand = new SqlCommand(sqlExpression, _connection);
                 sqlCommand.ExecuteNonQuery();
             }
@@ -66,19 +69,22 @@ namespace Venus.AI.WebApi.Models.Utils
             string sqlExpression = $"SELECT * FROM ContextTable WHERE Id={id}";
             SqlCommand sqlCommand = new SqlCommand(sqlExpression, _connection);
             SqlDataReader reader = sqlCommand.ExecuteReader();
+            UserContext userContext = new UserContext();
             if (reader.HasRows) // если есть данные
             {
                 while (reader.Read()) // построчно считываем данные
                 {
-                    UserContext userContext = new UserContext();
                     userContext.Id = reader.GetInt32(0);
                     userContext.IntentContext = reader.GetString(1);
                     userContext.TalkContext = reader.GetString(2);
+                    userContext.TalkReplicCount = reader.GetInt32(3);
                     reader.Close();
                     return userContext;
                 }
             }
-            return null;
+            userContext.Id = id;
+            reader.Close();
+            return userContext;
         }
     }
 }

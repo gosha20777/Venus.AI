@@ -33,6 +33,8 @@ namespace Venus.AI.WebApi.Models.AiServices
 
         public override async Task<TextRespone> Invork(VoiceRequest request)
         {
+            var time = DateTime.Now;
+
             //AudioConvertor
             byte[] testSequence = request.VoiceData;
             using (WaveFileWriter writer = new WaveFileWriter($"{request.Id}.wav", new WaveFormat(16000, 1)))
@@ -42,7 +44,9 @@ namespace Venus.AI.WebApi.Models.AiServices
             request.VoiceData = File.ReadAllBytes($"{request.Id}.wav");
             File.Delete($"{request.Id}.wav");
             
-            return await _googleSpeechService.Invork(request);
+            var respone = await _googleSpeechService.Invork(request);
+            Log.LogInformation(request.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+            return respone;
         }
 
 
@@ -67,6 +71,8 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             public override async Task<TextRespone> Invork(VoiceRequest request)
             {
+                var time = DateTime.Now;
+
                 string result = string.Empty;
                 WebRequest webRequest = WebRequest.Create($"https://www.google.com/speech-api/v2/recognize?output=json&lang={_language}&key={AppConfig.GoogleSpeechApiKey}");
                 webRequest.Method = "POST";
@@ -91,6 +97,9 @@ namespace Venus.AI.WebApi.Models.AiServices
                     Id = request.Id.Value,
                     TextData = result
                 };
+
+                Log.LogInformation(request.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
+
                 return respone;
             }
         }
