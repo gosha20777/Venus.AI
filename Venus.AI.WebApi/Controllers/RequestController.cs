@@ -35,12 +35,13 @@ namespace Venus.AI.WebApi.Controllers
         {
             try
             {
-                Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "processing voice request");
-                
+                var time = DateTime.Now;
                 //ApiRequest apiRequest = JsonConvert.DeserializeObject<ApiRequest>(requestStr);
                 //convert speech to text
                 if(apiRequest.GetRequestType() == Enums.RequestType.Voice)
                 {
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "processing voice request");
+
                     _speechToTextService.Initialize(apiRequest.GetLanguage());
                     var textServiceRespone = await _speechToTextService.Invork(new VoiceRequest() { Id = apiRequest.Id, VoiceData = apiRequest.VoiceData });
                     //recognize text and make text answer
@@ -64,7 +65,7 @@ namespace Venus.AI.WebApi.Controllers
                     textProcessingRespone = null;
                     speechServiceRespone = null;
 
-                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), "voice request processed");
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), $"voice request processed in {(DateTime.Now - time).Milliseconds} ms");
 
                     return Ok(apiRespone);
                 }

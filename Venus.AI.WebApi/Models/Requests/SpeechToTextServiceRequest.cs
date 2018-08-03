@@ -7,11 +7,9 @@ using Newtonsoft.Json;
 namespace Venus.AI.WebApi.Models.Requests
 {
     [JsonObject]
-    public class SpeechToTextServiceRequest
+    public class SpeechToTextServiceRequest : VoiceRequest
     {
         [JsonProperty("language")]
         public string Language { get; set; }
-        [JsonProperty("voiceData")]
-        public byte[] VoicehData { get; set; }
     }
 }

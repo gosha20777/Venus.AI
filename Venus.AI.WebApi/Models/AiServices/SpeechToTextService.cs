@@ -37,13 +37,20 @@ namespace Venus.AI.WebApi.Models.AiServices
 
             //AudioConvertor
             byte[] testSequence = request.VoiceData;
+
+            using (RawSourceWaveStream reader = new RawSourceWaveStream(new MemoryStream(testSequence), new WaveFormat(16000, 1)))
+            using (WaveStream convertedStream = WaveFormatConversionStream.CreatePcmStream(reader))
+            {
+                request.VoiceData = convertedStream.ToByteArray();
+            }
+            /*
             using (WaveFileWriter writer = new WaveFileWriter($"{request.Id}.wav", new WaveFormat(16000, 1)))
             {
                 writer.Write(testSequence, 0, testSequence.Length);
             }
             request.VoiceData = File.ReadAllBytes($"{request.Id}.wav");
             File.Delete($"{request.Id}.wav");
-            
+            */
             var respone = await _googleSpeechService.Invork(request);
             Log.LogInformation(request.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
             return respone;
@@ -187,7 +194,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 SpeechToTextServiceRequest request = new SpeechToTextServiceRequest
                 {
                     Language = _language,
-                    VoicehData = voiceData
+                    VoiceData = voiceData
                 };
                 if (client.HostActive())
                 {
