@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Venus.AI.WebApi.Models
+namespace Venus.AI.WebApi.Models.DbModels
 {
     public class UserContext
     {

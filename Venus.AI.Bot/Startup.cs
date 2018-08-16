@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Venus.AI.Bot
 {
@@ -37,6 +39,7 @@ namespace Venus.AI.Bot
             app.UseMvc();
 
             //Bot Configurations
+            JsonConvert.DeserializeObject<Models.AppSettings>(File.ReadAllText(Environment.CurrentDirectory + "/botConfig.json"));
             Models.Bot.GetBotClientAsync().Wait();
         }
     }

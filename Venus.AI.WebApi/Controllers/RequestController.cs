@@ -65,7 +65,7 @@ namespace Venus.AI.WebApi.Controllers
                     textProcessingRespone = null;
                     speechServiceRespone = null;
 
-                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), $"voice request processed in {(DateTime.Now - time).Milliseconds} ms");
+                    Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), $"voice request processed in {(DateTime.Now - time).TotalMilliseconds} ms");
 
                     return Ok(apiRespone);
                 }

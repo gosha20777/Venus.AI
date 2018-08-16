@@ -17,10 +17,12 @@ namespace Venus.AI.WebApi.Models.AiServices
     {
         private ApiAiService _apiAi;
         private RnnTalkService _rnnTalkService;
+        private Enums.Language _language;
         public override void Initialize(Enums.Language language)
         {
             _apiAi = new ApiAiService();
             _apiAi.Initialize(language);
+            _language = language;
 
             _rnnTalkService = new RnnTalkService();
             _rnnTalkService.Initialize(language);
@@ -36,6 +38,15 @@ namespace Venus.AI.WebApi.Models.AiServices
             {
                 respone = await _rnnTalkService.Invork(textRequest);
             }
+            DbClient db = new DbClient();
+            await db.AddMessage(new DbModels.Message()
+            {
+                Language = _language.ToString(),
+                OwnerId = textRequest.Id.Value,
+                Replic = textRequest.TextData + '#' + respone.TextData,
+                Time = DateTime.Now
+            });
+            db.Dispose();
             //Console.WriteLine("User> {0}", textRequest.TextData);
             //Console.WriteLine("Venus.AI> {0}", respone.TextData);
 
@@ -72,16 +83,16 @@ namespace Venus.AI.WebApi.Models.AiServices
             public override async Task<TextProcessingServiceRespone> Invork(TextRequest textRequest)
             {
                 var time = DateTime.Now;
-
                 TextProcessingServiceRespone textProcessingServiceRespone = new TextProcessingServiceRespone() { Id = textRequest.Id.Value };
                 ApiAiSDK.Model.AIResponse aiResponse;
-                var requestExtras = new ApiAiSDK.RequestExtras();
-                DBClient.Connect();
-                var context = DBClient.GetContext(textRequest.Id.Value);
+                ApiAiSDK.RequestExtras requestExtras;
+                DbClient db = new DbClient();
+                var context = await db.GetContext(textRequest.Id.Value);
 
-                //Костыль
-                if (!string.IsNullOrWhiteSpace(context.IntentContext))
+                if (context != null && !string.IsNullOrWhiteSpace(context.IntentContext))
                     requestExtras = JsonConvert.DeserializeObject<ApiAiSDK.RequestExtras>(context.IntentContext);
+                else
+                    requestExtras = new ApiAiSDK.RequestExtras();
 
                 aiResponse = apiAi.TextRequest(textRequest.TextData, requestExtras);
 
@@ -111,8 +122,9 @@ namespace Venus.AI.WebApi.Models.AiServices
                     requestExtras.Contexts.Add(aIContext);
                 }
                 context.IntentContext = JsonConvert.SerializeObject(requestExtras);
-                DBClient.InsertOrUpedateContext(context);
+                await db.AddOrUpdateContext(context);
                 requestExtras = null;
+                db.Dispose();
                 textProcessingServiceRespone.TextData = aiResponse.Result.Fulfillment.Speech;
 
 
@@ -225,7 +237,8 @@ namespace Venus.AI.WebApi.Models.AiServices
                         outputQueue += "_output_ru";
                     }
 
-                    var context = DBClient.GetContext(textRequest.Id.Value);
+                    DbClient db = new DbClient();
+                    var context = await db.GetContext(textRequest.Id.Value);
                     RnnTalkSystemRequest talkSystemRequest = new RnnTalkSystemRequest();
                     talkSystemRequest.Id = textRequest.Id;
                     talkSystemRequest.TextData = textRequest.TextData;
@@ -236,9 +249,9 @@ namespace Venus.AI.WebApi.Models.AiServices
                     var talkSystemRespone = JsonConvert.DeserializeObject<RnnTalkSystemRespone>(responeRnn);
                     context.TalkContext = talkSystemRespone.TalkContext;
                     context.TalkReplicCount = talkSystemRespone.TalkReplicCount;
-                    DBClient.InsertOrUpedateContext(context);
+                    await db.AddOrUpdateContext(context);
                     respone.TextData = talkSystemRespone.TextData;
-
+                    db.Dispose();
                     Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
 
                     return respone;
