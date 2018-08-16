@@ -13,7 +13,7 @@ namespace Venus.AI.WebApi.Models.DbModels
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=ai_db;Username=postgres;Password=20777");
+            optionsBuilder.UseNpgsql(AppConfig.CinnectionString);
         }
     }
 }
