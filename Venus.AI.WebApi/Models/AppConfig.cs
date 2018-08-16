@@ -21,5 +21,7 @@ namespace Venus.AI.WebApi.Models
         public static string RnnTalkServiceUrl { get; set; }
         [JsonProperty("rnnTalkServiceUrl_ru")]
         public static string RnnTalkServiceUrlRu { get; set; }
+        [JsonProperty("connectionString")]
+        public static string CinnectionString { get; set; }
     }
 }

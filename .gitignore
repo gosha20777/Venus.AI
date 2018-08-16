@@ -262,3 +262,4 @@ __pycache__/
 /Venus.AI.Bot/Properties/PublishProfiles
 *.wav
 /Venus.AI.WebApi/log.csv
+/Venus.AI.WebApi/Migrations
