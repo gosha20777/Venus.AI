@@ -1,7 +1,9 @@
 ﻿{
-  "googleSpeechApiKey": "",
-  "apiAiKey": "",
-  "yandexSpeechApiKey": "",
-  "yandexTranslatorKey": "",
-  "rnnTalkServiceUrl": ""
+  "googleSpeechApiKey": "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw",
+  "apiAiKey": "b753a131dba74e5d8fe0fe2d60cd4b2b",
+  "yandexSpeechApiKey": "b10e4ccd-e306-4725-a1c0-75b447ef79f2",
+  "yandexTranslatorKey": "trnsl.1.1.20180627T133735Z.619c9117248591b0.209b898c7425c156cc8461d105966542f3dd0629",
+  "rnnTalkServiceUrl_en": "http://localhost:5000/",
+  "rnnTalkServiceUrl_ru": "http://localhost:5001/",
+  "connectionString": "Host=localhost;Port=5432;Database=ai_db;Username=postgres;Password=20777"
 }
