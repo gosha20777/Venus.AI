@@ -96,6 +96,7 @@ namespace Venus.AI.WebApi.Controllers
             catch (Exception ex)
             {
                 Log.LogError(apiRequest.Id.Value, 0, this.GetType().ToString(), ex.Message);
+                Console.WriteLine(ex);
                 string outputFailText = "Я не расслышала, что вы сказали. Пожалуйста, повторите ваш запрос";
                 if (apiRequest.GetLanguage() == Enums.Language.English)
                     outputFailText = "I did not hear what you said. Please repeat your request";

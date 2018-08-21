@@ -264,3 +264,4 @@ __pycache__/
 /Venus.AI.WebApi/log.csv
 /Venus.AI.WebApi/Migrations
 /Venus.AI.RnnTalkService/models/reddit
+/Venus.AI.RnnTalkService/models

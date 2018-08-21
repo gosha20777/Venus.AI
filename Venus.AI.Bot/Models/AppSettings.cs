@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Venus.AI.Bot.Models
 {
-    public static class AppSettings
+    public class AppSettings
     {
         public static string Url { get; set; } = "https://URL:443/{0}";
         public static string Name { get; set; } = "<BOT_NAME>";

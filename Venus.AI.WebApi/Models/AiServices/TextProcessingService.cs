@@ -121,6 +121,10 @@ namespace Venus.AI.WebApi.Models.AiServices
                     }
                     requestExtras.Contexts.Add(aIContext);
                 }
+                if(requestExtras == null)
+                    requestExtras = new ApiAiSDK.RequestExtras();
+                if (context == null)
+                    context = new DbModels.UserContext() { Id = textRequest.Id.Value, IntentContext = "", TalkContext = "", TalkReplicCount = 0 };
                 context.IntentContext = JsonConvert.SerializeObject(requestExtras);
                 await db.AddOrUpdateContext(context);
                 requestExtras = null;
