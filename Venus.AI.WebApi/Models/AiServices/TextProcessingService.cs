@@ -36,7 +36,21 @@ namespace Venus.AI.WebApi.Models.AiServices
             respone.Id = textRequest.Id.Value;
             if (respone.IntentName == "input.unknown")
             {
-                respone = await _rnnTalkService.Invork(textRequest);
+                DbModels.PersinalIntentData persinalIntentData = new DbModels.PersinalIntentData()
+                {
+                    Id = respone.Id
+                };
+                Core.DistanseIntentClassifiter.Classifiter classifiter = new Core.DistanseIntentClassifiter.Classifiter(Core.DistanseIntentClassifiter.Languages.Russian);
+                classifiter.SetData(await persinalIntentData.ReadData());
+                var clssR = classifiter.Classify(textRequest.TextData);
+                if (clssR.First().Key == "failback")
+                    respone = await _rnnTalkService.Invork(textRequest);
+                else
+                {
+                    respone.IntentName = clssR.First().Key;
+                    respone.TextData = $"Ваша персональная команда {respone.IntentName} - обработана!";
+                }
+                    
             }
             DbClient db = new DbClient();
             await db.AddMessage(new DbModels.Message()
@@ -47,8 +61,6 @@ namespace Venus.AI.WebApi.Models.AiServices
                 Time = DateTime.Now
             });
             db.Dispose();
-            //Console.WriteLine("User> {0}", textRequest.TextData);
-            //Console.WriteLine("Venus.AI> {0}", respone.TextData);
 
             Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
 
@@ -141,15 +153,21 @@ namespace Venus.AI.WebApi.Models.AiServices
                             textProcessingServiceRespone.Entities.Add(parametr.Key, parametr.Value.ToString());
                             if (parametr.Value.ToString().Contains("dress"))
                                 textProcessingServiceRespone.WayPoint = "adidas";
+                            else if (parametr.Value.ToString().Contains("shop"))
+                                textProcessingServiceRespone.WayPoint = "adidas";
                             else if(parametr.Value.ToString().Contains("furniture"))
-                                textProcessingServiceRespone.WayPoint = "ikea";
+                                textProcessingServiceRespone.WayPoint = "adidas";
                             else if (parametr.Value.ToString().ToLower().Contains("ikea"))
-                                textProcessingServiceRespone.WayPoint = "ikea";
+                                textProcessingServiceRespone.WayPoint = "adidas";
                             else if (parametr.Value.ToString().ToLower().Contains("adidas"))
                                 textProcessingServiceRespone.WayPoint = "adidas";
                         }
                             
                     }
+                    if (aiResponse.Result.Action == "navigation_shops")
+                        textProcessingServiceRespone.WayPoint = "adidas";
+                    if (aiResponse.Result.Action == "Cheese")
+                        textProcessingServiceRespone.WayPoint = "cheese";
                     textProcessingServiceRespone.IntentName = aiResponse.Result.Action;
                 }
                 else
@@ -204,6 +222,7 @@ namespace Venus.AI.WebApi.Models.AiServices
 
                 Log.LogInformation(textRequest.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
 
+                //Console.WriteLine("WayPoint: " + textProcessingServiceRespone.WayPoint);
                 return textProcessingServiceRespone;
             }
         }

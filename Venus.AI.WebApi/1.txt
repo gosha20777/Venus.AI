@@ -1,0 +1,4 @@
+weapon#покажи им кузькину мать
+weapon#нагнем их
+weapon#убей их
+picture#сыр

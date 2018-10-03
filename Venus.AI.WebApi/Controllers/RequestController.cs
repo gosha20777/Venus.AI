@@ -67,6 +67,8 @@ namespace Venus.AI.WebApi.Controllers
 
                     Log.LogInformation(apiRequest.Id.Value, 0, this.GetType().ToString(), $"voice request processed in {(DateTime.Now - time).TotalMilliseconds} ms");
 
+                    Console.WriteLine("WayPoint:" + apiRespone.WayPoint);
+
                     return Ok(apiRespone);
                 }
                 else

@@ -24,6 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Venus.Ai.Core\Venus.Ai.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="appconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
