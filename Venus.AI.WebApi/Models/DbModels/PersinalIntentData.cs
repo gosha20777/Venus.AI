@@ -37,5 +37,13 @@ namespace Venus.AI.WebApi.Models.DbModels
                 lines.Add($"{item.Key}#{item.Value}");
             await File.AppendAllLinesAsync($"{Id}.txt", lines);
         }
+        public async Task WriteData(KeyValuePair<string, string> data)
+        {
+            List<string> lines = new List<string>
+            {
+                $"{data.Key}#{data.Value}"
+            };
+            await File.AppendAllLinesAsync($"{Id}.txt", lines);
+        }
     }
 }

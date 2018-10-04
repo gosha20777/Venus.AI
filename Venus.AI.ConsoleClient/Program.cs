@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Threading;
 using Venus.AI.ConsoleClient.Utils;
@@ -7,7 +8,7 @@ namespace Venus.AI.ConsoleClient
 {
     class Program
     {
-        private const bool SHOW_DEBUG_INFO = true;
+        private const bool SHOW_DEBUG_INFO = false;
         static void Main(string[] args)
         {
             Console.WriteLine("Venus.AI console client");
@@ -44,13 +45,65 @@ namespace Venus.AI.ConsoleClient
 
                 try
                 {
-                    var jsonRequest = JsonConverter.ToJson(inputMessage);
+                    var jsonRequest = Utils.JsonConverter.ToJson(inputMessage);
                     var jsonRespone = RestApiClient.Post(jsonRequest);
-                    ApiRespone outputMessage = JsonConverter.FromJson<ApiRespone>(jsonRespone);
-                    Console.WriteLine(outputMessage.OuputText);
+                    ApiRespone outputMessage = Utils.JsonConverter.FromJson<ApiRespone>(jsonRespone);
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write($"\nuser   > ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{outputMessage.InputText}\n");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write($"venus.ai> ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{outputMessage.OutputText}\n");
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.Write($"intent  : ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{outputMessage.IntentName}\n\n");
+                    Console.ForegroundColor = ConsoleColor.Gray;
 
                     File.WriteAllBytes("answer.wav", outputMessage.VoiceData);
                     SoundPlayer.Play("answer.wav");
+
+                    if (outputMessage.IntentName == "personalize_intent")
+                    {
+                        RestApiClient.Сonfigure(@"http://192.168.88.150:50567/api/intent");
+                        var jsonIntents = RestApiClient.Get();
+                        var intents = JsonConvert.DeserializeObject<IntentList>(jsonIntents);
+                        Console.WriteLine("Intents:\n#\t| Intent Name");
+                        for (int i = 0; i< intents.Intents.Count; i++)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            Console.Write($"{i}\t| ");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.WriteLine(intents.Intents[i]);
+                        }
+                        Console.Write("Enter Intent number: ");
+                        var n = int.Parse(Console.ReadLine());
+
+                        Console.Write($"Intent {intents.Intents[n]} chosen! Say your command. Press <Enter> to start recording.");
+                        Console.ReadLine();
+                        Recorder.StartRecord();
+                        Console.Write("Recording... \nPress <Enter> to stop.");
+                        Console.ReadLine();
+                        Recorder.StopRecord();
+                        Thread.Sleep(100);
+
+                        IntentModificationRequest intentModificationRequest = new IntentModificationRequest()
+                        {
+                            Id = 1,
+                            IntentName = intents.Intents[n],
+                            Language = "rus",
+                            VoiceData = System.IO.File.ReadAllBytes("demo.wav")
+                        };
+
+                        var jsonResponeIntent = RestApiClient.Post(JsonConvert.SerializeObject(intentModificationRequest));
+                        var r = JsonConvert.DeserializeObject<IntentModificationRespone>(jsonResponeIntent);
+
+                        File.WriteAllBytes("answer.wav", r.VoiceData);
+                        SoundPlayer.Play("answer.wav");
+                    }
                     if (SHOW_DEBUG_INFO)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;

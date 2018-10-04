@@ -55,7 +55,8 @@ namespace Venus.AI.WebApi.Controllers
                     {
                         Id = speechServiceRespone.Id,
                         VoiceData = speechServiceRespone.VoiceData,
-                        OuputText = textProcessingRespone.TextData,
+                        InputText = textServiceRespone.TextData,
+                        OutputText = textProcessingRespone.TextData,
                         IntentName = textProcessingRespone.IntentName,
                         Entities = textProcessingRespone.Entities,
                         WayPoint = textProcessingRespone.WayPoint
@@ -83,9 +84,11 @@ namespace Venus.AI.WebApi.Controllers
                     {
                         Id = apiRequest.Id.Value,
                         VoiceData = null,
-                        OuputText = textProcessingRespone.TextData,
+                        InputText = apiRequest.TextData,
+                        OutputText = textProcessingRespone.TextData,
                         IntentName = textProcessingRespone.IntentName,
-                        Entities = textProcessingRespone.Entities
+                        Entities = textProcessingRespone.Entities,
+                        WayPoint = textProcessingRespone.WayPoint
                     };
 
                     textProcessingRespone = null;
@@ -108,7 +111,8 @@ namespace Venus.AI.WebApi.Controllers
                 {
                     Id = speechServiceRespone.Id,
                     VoiceData = speechServiceRespone.VoiceData,
-                    OuputText = outputFailText,
+                    InputText = "",
+                    OutputText = outputFailText,
                     IntentName = "none",
                     Entities = null,
                     WayPoint = null

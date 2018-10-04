@@ -11,8 +11,10 @@ namespace Venus.AI.WebApi.Models.Respones
     {
         [JsonProperty("voiceData")]
         public byte[] VoiceData { get; set; }
-        [JsonProperty("ouputText")]
-        public string OuputText { get; set; }
+        [JsonProperty("inputText")]
+        public string InputText { get; set; }
+        [JsonProperty("outputText")]
+        public string OutputText { get; set; }
         [JsonProperty("intentName")]
         public string IntentName { get; set; }
         [JsonProperty("entities")]
