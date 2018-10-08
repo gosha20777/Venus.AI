@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Venus.AI.SDK.Core.Classifiters.DistanseClassifiterCore;
+using Venus.AI.SDK.Core.Enums;
 
-namespace Venus.AI.Core.DistanseIntentClassifiter
+namespace Venus.AI.SDK.Core.Classifiters
 {
-    public class Classifiter : IClassifiter
+    public class DistanseClassifiter : IClassifiter
     {
-        Languages language;
+        Language language;
         List<KeyValuePair<string, Phrase>> data;
-        public Classifiter(Languages language)
+        public DistanseClassifiter(Language language)
         {
             this.language = language;
             data = new List<KeyValuePair<string, Phrase>>();
@@ -33,7 +34,7 @@ namespace Venus.AI.Core.DistanseIntentClassifiter
             }
 
             var codeKeys = Helpers.CodeKeysEng.ToList();
-            if (language == Languages.Russian)
+            if (language == Language.Russian)
                 codeKeys = codeKeys.Concat(Helpers.CodeKeysRus).ToList();
 
             Phrase originalPhrase = new Phrase();
@@ -90,7 +91,7 @@ namespace Venus.AI.Core.DistanseIntentClassifiter
         public void SetData(IEnumerable<KeyValuePair<string, string>> data)
         {
             var codeKeys = Helpers.CodeKeysEng.ToList();
-            if (language == Languages.Russian)
+            if (language == Language.Russian)
                 codeKeys = codeKeys.Concat(Helpers.CodeKeysRus).ToList();
 
             foreach (var item in data)

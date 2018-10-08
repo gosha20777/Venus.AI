@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Venus.AI.Core.DistanseIntentClassifiter
+namespace Venus.AI.SDK.Core.Classifiters.DistanseClassifiterCore
 {
     class Phrase
     {

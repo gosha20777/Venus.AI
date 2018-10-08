@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Venus.Ai.Core\Venus.Ai.Core.csproj" />
+    <ProjectReference Include="..\Venus.AI.SDK\Venus.AI.SDK.csproj" />
   </ItemGroup>
 
   <ItemGroup>

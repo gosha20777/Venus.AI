@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venus.AI.Bot", "Venus.AI.Bo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venus.AI.ConsoleClient", "Venus.AI.ConsoleClient\Venus.AI.ConsoleClient.csproj", "{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venus.Ai.Core", "Venus.Ai.Core\Venus.Ai.Core.csproj", "{CF5E880D-322F-4DC8-8B05-6BF1D7ABCC4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venus.AI.SDK", "Venus.AI.SDK\Venus.AI.SDK.csproj", "{7461B373-506E-4CDD-A096-823227FA3647}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B82FEEA5-13CC-49BC-81D3-C339D84E33DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF5E880D-322F-4DC8-8B05-6BF1D7ABCC4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF5E880D-322F-4DC8-8B05-6BF1D7ABCC4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF5E880D-322F-4DC8-8B05-6BF1D7ABCC4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF5E880D-322F-4DC8-8B05-6BF1D7ABCC4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7461B373-506E-4CDD-A096-823227FA3647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7461B373-506E-4CDD-A096-823227FA3647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7461B373-506E-4CDD-A096-823227FA3647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7461B373-506E-4CDD-A096-823227FA3647}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

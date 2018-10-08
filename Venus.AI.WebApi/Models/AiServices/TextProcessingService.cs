@@ -40,7 +40,7 @@ namespace Venus.AI.WebApi.Models.AiServices
                 {
                     Id = respone.Id
                 };
-                Core.DistanseIntentClassifiter.Classifiter classifiter = new Core.DistanseIntentClassifiter.Classifiter(Core.DistanseIntentClassifiter.Languages.Russian);
+                SDK.Core.Classifiters.DistanseClassifiter classifiter = new SDK.Core.Classifiters.DistanseClassifiter(SDK.Core.Enums.Language.Russian);
                 classifiter.SetData(await persinalIntentData.ReadData());
                 var clssR = classifiter.Classify(textRequest.TextData);
                 if (clssR.First().Key == "failback")

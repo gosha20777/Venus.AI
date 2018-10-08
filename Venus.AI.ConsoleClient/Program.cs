@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Venus.AI.ConsoleClient.Utils;
+using Venus.AI.SDK.Components;
 
 namespace Venus.AI.ConsoleClient
 {
@@ -29,6 +30,21 @@ namespace Venus.AI.ConsoleClient
                 inputMessage.RequestType = "voice";
                 inputMessage.Id = 1;
                 inputMessage.VoiceData = System.IO.File.ReadAllBytes("demo.wav");
+
+                /////////////DEBUG
+                var config = JsonConvert.DeserializeObject<SDK.Components.Configurations.YandexTtsCompmnentConfig>(File.ReadAllText(Environment.CurrentDirectory + "/appconfig.json"));
+                YandexSttComponent yandexStt = new YandexSttComponent();
+                var res = yandexStt.Process(new SDK.Components.Messages.VoiceMessage()
+                {
+                    Id = 1,
+                    Language = SDK.Core.Enums.Language.Russian,
+                    Vioce = inputMessage.VoiceData
+                });
+
+                Console.WriteLine(">" + res.Text);
+                Console.ReadLine();
+                /////////////
+
                 RestApiClient.Сonfigure(@"http://192.168.88.150:50567/api/request");
                 string err;
                 bool isConnect = RestApiClient.Connect(out err);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Venus.AI.Core.DistanseIntentClassifiter
+namespace Venus.AI.SDK.Core.Classifiters.DistanseClassifiterCore
 {
     class Word
     {

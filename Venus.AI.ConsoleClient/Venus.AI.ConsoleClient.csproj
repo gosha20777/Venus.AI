@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Venus.AI.SDK\Venus.AI.SDK.csproj" />
     <ProjectReference Include="..\Venus.AI.WebApi\Venus.AI.WebApi.csproj" />
   </ItemGroup>
 
