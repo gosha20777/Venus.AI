@@ -32,7 +32,7 @@ namespace Venus.AI.ConsoleClient
                 inputMessage.VoiceData = System.IO.File.ReadAllBytes("demo.wav");
 
                 /////////////DEBUG
-                var config = JsonConvert.DeserializeObject<SDK.Components.Configurations.YandexTtsCompmnentConfig>(File.ReadAllText(Environment.CurrentDirectory + "/appconfig.json"));
+                var config = JsonConvert.DeserializeObject<SDK.Components.Configurations.YandexCompmnentConfig>(File.ReadAllText(Environment.CurrentDirectory + "/appconfig.json"));
                 YandexSttComponent yandexStt = new YandexSttComponent();
                 var res = yandexStt.Process(new SDK.Components.Messages.VoiceMessage()
                 {

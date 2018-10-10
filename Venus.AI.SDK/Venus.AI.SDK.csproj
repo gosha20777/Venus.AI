@@ -6,14 +6,19 @@
 
   <ItemGroup>
     <Folder Include="Core\Configurations\" />
+    <Folder Include="Core\RnnChiChatNetwork\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ITCC.YandexSpeechKitClient" Version="1.0.2" />
+    <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ApiAiSDK">
+      <HintPath>..\..\VS\dialogflow-dotnetcore-client\ApiAiSDK\bin\Release\netcoreapp2.0\ApiAiSDK.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\10.0.1\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
     </Reference>

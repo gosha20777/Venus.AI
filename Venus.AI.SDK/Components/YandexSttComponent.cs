@@ -30,7 +30,7 @@ namespace Venus.AI.SDK.Components
                 default:
                     throw new Exceptions.InvalidMessageException(message.Id, "Invalid Language: " + message.Language.ToString());
             }
-            var apiSetttings = new SpeechKitClientOptions($"{YandexTtsCompmnentConfig.YandexSpeechApiKey}", "MashaWebApi", Guid.Empty, "server");
+            var apiSetttings = new SpeechKitClientOptions($"{YandexCompmnentConfig.YandexSpeechApiKey}", "MashaWebApi", Guid.Empty, "server");
             using (var client = new SpeechKitClient(apiSetttings))
             {
                 MemoryStream mediaStream = new MemoryStream(message.Vioce);

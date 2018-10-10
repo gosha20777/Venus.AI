@@ -6,7 +6,7 @@ using System.Text;
 namespace Venus.AI.SDK.Components.Configurations
 {
     [JsonObject]
-    public class YandexTtsCompmnentConfig
+    public class YandexCompmnentConfig
     {
         [JsonProperty("yandexSpeechApiKey")]
         public static string YandexSpeechApiKey { get; set; }
