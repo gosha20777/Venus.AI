@@ -69,10 +69,11 @@ namespace Venus.AI.SDK.Components
                 requestExtras.Contexts.Add(aIContext);
             }
             userContext = JsonConvert.SerializeObject(requestExtras);
-            message.Text = aiResponse.Result.Fulfillment.Speech;
             intentName = aiResponse.Result.Action;
-            if (string.IsNullOrWhiteSpace(intentName))
-                intentName = "none";
+            if (string.IsNullOrWhiteSpace(intentName) || string.IsNullOrWhiteSpace(aiResponse.Result.Fulfillment.Speech))
+                intentName = "input.unknown";
+            else if(intentName != "input.unknown")
+                message.Text = aiResponse.Result.Fulfillment.Speech;
             return message;
         }
     }

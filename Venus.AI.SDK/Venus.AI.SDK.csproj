@@ -7,7 +7,6 @@
   <ItemGroup>
     <Folder Include="Core\Configurations\" />
     <Folder Include="Core\RnnChiChatNetwork\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
