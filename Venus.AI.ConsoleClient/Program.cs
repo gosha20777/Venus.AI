@@ -9,7 +9,7 @@ namespace Venus.AI.ConsoleClient
 {
     class Program
     {
-        private const bool SHOW_DEBUG_INFO = false;
+        private const bool SHOW_DEBUG_INFO = true;
         static void Main(string[] args)
         {
             Console.WriteLine("Venus.AI console client");
@@ -31,6 +31,7 @@ namespace Venus.AI.ConsoleClient
                 inputMessage.Id = 1;
                 inputMessage.VoiceData = System.IO.File.ReadAllBytes("demo.wav");
 
+                /*
                 /////////////DEBUG
                 var config = JsonConvert.DeserializeObject<SDK.Components.Configurations.YandexCompmnentConfig>(File.ReadAllText(Environment.CurrentDirectory + "/appconfig.json"));
                 YandexSttComponent yandexStt = new YandexSttComponent();
@@ -44,6 +45,7 @@ namespace Venus.AI.ConsoleClient
                 Console.WriteLine(">" + res.Text);
                 Console.ReadLine();
                 /////////////
+                */
 
                 RestApiClient.Сonfigure(@"http://192.168.88.150:50567/api/request");
                 string err;

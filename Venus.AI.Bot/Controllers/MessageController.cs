@@ -27,7 +27,7 @@ namespace Venus.AI.Bot.Controllers
 
             var commands = Models.Bot.Commands;
             var message = update.Message;
-            var botClient = await Models.Bot.GetBotClientAsync();
+            var botClient = Models.Bot.GetBotClient();
 
             foreach (var command in commands)
             {

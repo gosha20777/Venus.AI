@@ -21,6 +21,5 @@ namespace Venus.AI.WebApi
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
-        /*Test comment*/
     }
 }

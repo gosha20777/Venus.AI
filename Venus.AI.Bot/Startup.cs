@@ -40,7 +40,7 @@ namespace Venus.AI.Bot
 
             //Bot Configurations
             JsonConvert.DeserializeObject<Models.AppSettings>(File.ReadAllText(Environment.CurrentDirectory + "/botConfig.json"));
-            Models.Bot.GetBotClientAsync().Wait();
+            Models.Bot.GetBotClient();
         }
     }
 }

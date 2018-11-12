@@ -43,14 +43,6 @@ namespace Venus.AI.WebApi.Models.AiServices
             {
                 request.VoiceData = convertedStream.ToByteArray();
             }
-            /*
-            using (WaveFileWriter writer = new WaveFileWriter($"{request.Id}.wav", new WaveFormat(16000, 1)))
-            {
-                writer.Write(testSequence, 0, testSequence.Length);
-            }
-            request.VoiceData = File.ReadAllBytes($"{request.Id}.wav");
-            File.Delete($"{request.Id}.wav");
-            */
             var respone = await _googleSpeechService.Invork(request);
             Log.LogInformation(request.Id.Value, 0, this.GetType().ToString(), $"service end work in {(DateTime.Now - time).Milliseconds} ms");
             return respone;

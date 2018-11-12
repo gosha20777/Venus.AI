@@ -14,7 +14,7 @@ namespace Venus.AI.Bot.Models
 
         public static IReadOnlyList<Command> Commands => commandsList.AsReadOnly();
 
-        public static async Task<TelegramBotClient> GetBotClientAsync()
+        public static TelegramBotClient GetBotClient()
         {
             if (botClient != null)
             {
@@ -24,11 +24,13 @@ namespace Venus.AI.Bot.Models
             commandsList = new List<Command>();
             commandsList.Add(new StartCommand());
             commandsList.Add(new ChatCommand());
+            commandsList.Add(new FailbackCommand());
             //TODO: Add more commands
 
             botClient = new TelegramBotClient(AppSettings.Key);
             string hook = string.Format(AppSettings.Url, "api/message");
-            await botClient.SetWebhookAsync(hook);
+            Console.WriteLine($"BotKey: {AppSettings.Key}\n BotName: {AppSettings.Name}\nBotWebHook: {hook}");
+            botClient.SetWebhookAsync(hook);
             return botClient;
         }
     }

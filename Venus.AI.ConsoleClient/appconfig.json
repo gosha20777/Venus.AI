@@ -1,0 +1,9 @@
+﻿{
+  "googleSpeechApiKey": "KEY",
+  "apiAiKey": "KEY",
+  "yandexSpeechApiKey": "KEY",
+  "yandexTranslatorKey": "KEY",
+  "rnnTalkServiceUrl_en": "URL",
+  "rnnTalkServiceUrl_ru": "URL",
+  "connectionString": "CTRING"
+}

@@ -26,6 +26,8 @@ namespace Venus.AI.Bot.Models.Commands
         {
             try
             {
+                await client.SendChatActionAsync(message.Chat.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
+                RestApiClient.Сonfigure(AppSettings.VenusAiUri);
                 ApiRequest inputMessage = new ApiRequest()
                 {
                     Id = message.Chat.Id,
@@ -48,7 +50,7 @@ namespace Venus.AI.Bot.Models.Commands
                     ResizeKeyboard = true
                 };
                 await client.SendTextMessageAsync(outputMessage.Id, outputMessage.OuputText, replyMarkup: keyboard);
-
+                /*
                 Replic inputR = new Replic()
                 {
                     Id = message.Chat.Id,
@@ -67,6 +69,7 @@ namespace Venus.AI.Bot.Models.Commands
                     JsonConvert.SerializeObject(outputR)
                 };
                 await System.IO.File.AppendAllLinesAsync($"{Environment.CurrentDirectory}\\{message.Chat.Id}.txt", lines);
+                */
             }
             catch (Exception ex)
             {
